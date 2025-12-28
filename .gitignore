@@ -1,0 +1,3 @@
+training_data/
+T5_model_cache/
+*.pyc
