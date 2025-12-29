@@ -1,3 +1,6 @@
 training_data/
 T5_model_cache/
 *.pyc
+T5_270M_Base/
+T5_1B_model_Base/
+*.pth

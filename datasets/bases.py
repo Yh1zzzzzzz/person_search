@@ -12,6 +12,7 @@ import copy
 
 
 class BaseDataset(object):
+    #打印数据集信息用的
     """
     Base class of text to image reid dataset
     """
@@ -40,6 +41,7 @@ class BaseDataset(object):
 
 
 def tokenize(caption: str, tokenizer, text_length=77, truncate=True) -> torch.LongTensor:
+    #输入caption，输出 tokenizer进行tokenize后的结果
     sot_token = tokenizer.encoder["<|startoftext|>"]
     eot_token = tokenizer.encoder["<|endoftext|>"]
     tokens = [sot_token] + tokenizer.encode(caption) + [eot_token]
@@ -58,6 +60,10 @@ def tokenize(caption: str, tokenizer, text_length=77, truncate=True) -> torch.Lo
 
 
 class ImageTextDataset(Dataset):
+    """
+    ImageTextDataset:从dataset中读取数据
+    通过__getitem__函数返回 pid, image_id, img_path, caption
+    """
     def __init__(self,
                  dataset,
                  transform=None,
@@ -91,6 +97,10 @@ class ImageTextDataset(Dataset):
 
 
 class ImageDataset(Dataset):
+    """
+    ImageDataset:从image_pids和img_paths中读取数据
+    通过__getitem__函数返回 pid 和 img
+    """
     def __init__(self, image_pids, img_paths, transform=None):
         self.image_pids = image_pids
         self.img_paths = img_paths
@@ -108,6 +118,11 @@ class ImageDataset(Dataset):
 
 
 class TextDataset(Dataset):
+    """
+    TextDataset:从caption_pids和captions中读取数据
+    通过__getitem__函数返回 pid 和 tokenized caption
+    其中 caption 通过 SimpleTokenizer 进行 tokenization
+    """
     def __init__(self,
                  caption_pids,
                  captions,
@@ -131,6 +146,10 @@ class TextDataset(Dataset):
 
 
 class ImageTextMLMDataset(Dataset):
+    """
+    ImageTextMLMDataset:从dataset中读取数据
+    通过__getitem__函数返回 pid, image_id, img_path, caption, mlm_tokens, mlm_labels
+    """
     def __init__(self,
                  dataset,
                  transform=None,

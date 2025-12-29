@@ -18,6 +18,9 @@ __factory = {'CUHK-PEDES': CUHKPEDES, 'ICFG-PEDES': ICFGPEDES, 'RSTPReid': RSTPR
 
 
 def build_transforms(img_size=(384, 128), aug=False, is_train=True):
+    """
+    构建图片数据增强，传递到dataset中，供dataset读取图片时使用
+    """
     height, width = img_size
 
     mean = [0.48145466, 0.4578275, 0.40821073]
@@ -53,6 +56,21 @@ def build_transforms(img_size=(384, 128), aug=False, is_train=True):
 
 
 def collate(batch):
+    """
+    处理的数据类型
+    从 ImageTextDataset 的 __getitem__ 方法返回的样本格式：
+    {
+        'img': PIL.Image.Image,
+        'img_id': int,
+        'caption': tensor,
+        'pids': int,
+    }
+    处理后的数据类型,
+    'pids': torch.tensor([1, 2, 3, ...]),                      # [batch_size]
+    'image_ids': torch.tensor([1001, 1002, 1003, ...]),        # [batch_size]
+    'images': torch.Tensor([batch_size, 3, 384, 128]),         # [batch_size, 3, 384, 128]
+    'caption_ids': torch.Tensor([batch_size, 77]),             # [batch_size, 77]
+    """
     keys = set([key for b in batch for key in b.keys()])
     # turn list of dicts data structure to dict of lists data structure
     dict_batch = {k: [dic[k] if k in dic else None for dic in batch] for k in keys}
@@ -69,6 +87,12 @@ def collate(batch):
     return batch_tensor_dict
 
 def build_dataloader(args, tranforms=None):
+    """
+    根据命令行参数，构建数据加载器(DataLoader)
+    :param args: 命令行参数
+    :param tranforms: 数据增强
+    :return: train_loader, val_img_loader, val_txt_loader, num_classes
+    """
     logger = logging.getLogger("IRRA.dataset")
 
     num_workers = args.num_workers

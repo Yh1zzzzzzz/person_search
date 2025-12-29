@@ -61,7 +61,7 @@ python train.py \
 --MLM \
 --loss_names 'sdm+mlm+id' \
 --dataset_name 'CUHK-PEDES' \
---root_dir 'your dataset root dir' \
+--root_dir 'training_data' \
 --num_epoch 60
 ```
 
