@@ -23,6 +23,7 @@ class RandomIdentitySampler(Sampler):
         #{783: [0, 5, 116, 876, 1554, 2041],...,}
         for index, (pid, _, _, _) in enumerate(self.data_source):
             self.index_dic[pid].append(index)
+            #使用pid作为key，index作为value，存入字典，方便后续根据pid获取index
         self.pids = list(self.index_dic.keys())
 
         # estimate number of examples in an epoch
@@ -64,4 +65,3 @@ class RandomIdentitySampler(Sampler):
 
     def __len__(self):
         return self.length
-
