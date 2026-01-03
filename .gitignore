@@ -4,3 +4,5 @@ T5_model_cache/
 T5_270M_Base/
 T5_1B_model_Base/
 *.pth
+training_data_augment/
+Qwen3-VL-2B-Instruct_Base/
