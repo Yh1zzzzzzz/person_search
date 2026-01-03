@@ -114,7 +114,18 @@ def align_and_update_state_dicts(model_state_dict, loaded_state_dict, except_key
         key_old = loaded_keys[idx_old]
         if check_key(key, except_keys):
             continue
-        model_state_dict[key] = loaded_state_dict[key_old]
+        loaded_value = loaded_state_dict[key_old]
+        current_value = model_state_dict[key]
+
+        # Skip incompatible shapes (e.g., classifier heads when num_classes differs)
+        if hasattr(current_value, "shape") and hasattr(loaded_value, "shape"):
+            if tuple(current_value.shape) != tuple(loaded_value.shape):
+                logger.info(
+                    f"{key: <{max_size}} skipped (shape mismatch): current {tuple(current_value.shape)} vs loaded {tuple(loaded_value.shape)}"
+                )
+                continue
+
+        model_state_dict[key] = loaded_value
         logger.info(
             log_str_template.format(
                 key,

@@ -6,6 +6,7 @@ from utils.metrics import Evaluator
 from utils.comm import get_rank, synchronize
 from torch.utils.tensorboard import SummaryWriter
 from prettytable import PrettyTable
+from contextlib import nullcontext
 
 
 def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
@@ -28,6 +29,7 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
         "itc_loss": AverageMeter(),
         "id_loss": AverageMeter(),
         "mlm_loss": AverageMeter(),
+        "gen_loss": AverageMeter(),
         "img_acc": AverageMeter(),
         "txt_acc": AverageMeter(),
         "mlm_acc": AverageMeter()
@@ -37,6 +39,16 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
 
     best_top1 = 0.0
 
+    def _as_loss_tensor(x, device: str):
+        if torch.is_tensor(x):
+            return x
+        return torch.as_tensor(x, device=device, dtype=torch.float32)
+
+    def _to_scalar(x):
+        if torch.is_tensor(x):
+            return float(x.detach().item())
+        return float(x)
+
     # train
     for epoch in range(start_epoch, num_epoch + 1):
         start_time = time.time()
@@ -44,26 +56,84 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
             meter.reset()
         model.train()
 
+        use_amp = bool(getattr(args, "amp", False))
+        amp_dtype_str = str(getattr(args, "amp_dtype", "bf16")).lower()
+        if amp_dtype_str == "fp16":
+            amp_dtype = torch.float16
+        else:
+            amp_dtype = torch.bfloat16
+
+        grad_accum_steps = int(getattr(args, "grad_accum_steps", 1))
+        if grad_accum_steps <= 0:
+            raise ValueError(f"grad_accum_steps must be >= 1, got {grad_accum_steps}")
+
+        max_grad_norm = float(getattr(args, "max_grad_norm", 0.0))
+        scaler = torch.amp.GradScaler("cuda", enabled=use_amp and amp_dtype == torch.float16)
+        autocast_ctx = (
+            torch.autocast(device_type="cuda", dtype=amp_dtype)
+            if use_amp
+            else nullcontext()
+        )
+
+        optimizer.zero_grad(set_to_none=True)
+
         for n_iter, batch in enumerate(train_loader):
-            batch = {k: v.to(device) for k, v in batch.items()}
+            batch = {k: v.to(device, non_blocking=True) for k, v in batch.items()}
 
-            ret = model(batch)
-            total_loss = sum([v for k, v in ret.items() if "loss" in k])
+            if bool(getattr(args, "reuse_mm_encoder_for_image", False)):
+                # Let the model reuse gen encoder outputs for image features (when available)
+                batch["reuse_mm_encoder_for_image"] = True
 
-            batch_size = batch['images'].shape[0]
-            meters['loss'].update(total_loss.item(), batch_size)
-            meters['sdm_loss'].update(ret.get('sdm_loss', 0), batch_size)
-            meters['itc_loss'].update(ret.get('itc_loss', 0), batch_size)
-            meters['id_loss'].update(ret.get('id_loss', 0), batch_size)
-            meters['mlm_loss'].update(ret.get('mlm_loss', 0), batch_size)
+            with autocast_ctx:
+                ret = model(batch)
 
-            meters['img_acc'].update(ret.get('img_acc', 0), batch_size)
-            meters['txt_acc'].update(ret.get('txt_acc', 0), batch_size)
-            meters['mlm_acc'].update(ret.get('mlm_acc', 0), 1)
+            if "total_loss" in ret:
+                total_loss = _as_loss_tensor(ret["total_loss"], device)
+            else:
+                loss_terms = []
+                for k, v in ret.items():
+                    if k.endswith("_loss"):
+                        loss_terms.append(_as_loss_tensor(v, device))
+                total_loss = torch.stack(loss_terms).sum() if len(loss_terms) > 0 else torch.zeros((), device=device)
 
-            optimizer.zero_grad()
-            total_loss.backward()
-            optimizer.step()
+            # gradient accumulation
+            loss_for_backward = total_loss / grad_accum_steps
+
+            if "images" in batch:
+                batch_size = batch["images"].shape[0]
+            else:
+                batch_size = batch["pixel_values"].shape[0]
+
+            meters['loss'].update(_to_scalar(total_loss), batch_size)
+            meters['sdm_loss'].update(_to_scalar(ret.get('sdm_loss', 0)), batch_size)
+            meters['itc_loss'].update(_to_scalar(ret.get('itc_loss', 0)), batch_size)
+            meters['id_loss'].update(_to_scalar(ret.get('id_loss', 0)), batch_size)
+            meters['mlm_loss'].update(_to_scalar(ret.get('mlm_loss', 0)), batch_size)
+            meters['gen_loss'].update(_to_scalar(ret.get('gen_loss', 0)), batch_size)
+
+            meters['img_acc'].update(_to_scalar(ret.get('img_acc', 0)), batch_size)
+            meters['txt_acc'].update(_to_scalar(ret.get('txt_acc', 0)), batch_size)
+            meters['mlm_acc'].update(_to_scalar(ret.get('mlm_acc', 0)), 1)
+
+            if scaler.is_enabled():
+                scaler.scale(loss_for_backward).backward()
+            else:
+                loss_for_backward.backward()
+
+            do_step = ((n_iter + 1) % grad_accum_steps == 0)
+            if do_step:
+                if max_grad_norm > 0:
+                    if scaler.is_enabled():
+                        scaler.unscale_(optimizer)
+                    torch.nn.utils.clip_grad_norm_(model.parameters(), max_grad_norm)
+
+                if scaler.is_enabled():
+                    scaler.step(optimizer)
+                    scaler.update()
+                else:
+                    optimizer.step()
+                optimizer.zero_grad(set_to_none=True)
+
             synchronize()
 
             if (n_iter + 1) % log_period == 0:

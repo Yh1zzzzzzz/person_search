@@ -1,0 +1,1646 @@
+5
+2
+0
+2
+
+c
+e
+D
+6
+1
+
+]
+L
+C
+.
+s
+c
+[
+
+1
+v
+6
+5
+8
+4
+1
+.
+2
+1
+5
+2
+:
+v
+i
+X
+r
+a
+
+T5Gemma 2: Seeing, Reading, and
+Understanding Longer
+
+Biao Zhang*, Paul Suganthan*, Gaël Liu*, Ilya Philippov*, Sahil Dua, Ben Hora, Kat Black, Gus Martins, Omar
+Sanseviero, Shreya Pathak, Cassidy Hardin, Francesco Visin, Jiageng Zhang, Kathleen Kenealy, Qin Yin,
+Olivier Lacombe, Armand Joulin, Tris Warkentin and Adam Roberts†
+1Google DeepMind
+
+We introduce T5Gemma 2, the next generation of the T5Gemma family of lightweight open encoder-
+decoder models, featuring strong multilingual, multimodal and long-context capabilities. T5Gemma 2
+follows the adaptation recipe (via UL2) in T5Gemma – adapting a pretrained decoder-only model into
+an encoder-decoder model, and extends it from text-only regime to multimodal based on the Gemma 3
+models. We further propose two methods to improve the efficiency: tied word embedding that shares
+all embeddings across encoder and decoder, and merged attention that unifies decoder self- and cross-
+attention into a single joint module. Experiments demonstrate the generality of the adaptation strategy
+over architectures and modalities as well as the unique strength of the encoder-decoder architecture
+on long context modeling. Similar to T5Gemma, T5Gemma 2 yields comparable or better pretraining
+performance and significantly improved post-training performance than its Gemma 3 counterpart. We
+release the pretrained models (270M-270M, 1B-1B and 4B-4B) to the community for future research.
+
+Figure 1 | Summary of pretraining (top) and post-training (bottom) performance for Gemma 3 and
+T5Gemma 2 at 270M, 1B and 4B over five capabilities. 270M for T5Gemma 2 means a 270M encoder
+with a 270M decoder (the same applies to 1B and 4B). X: multilingual. Note the post-training result
+for T5Gemma 2 is for illustration, where we only performed slight supervised finetuning without RL.
+
+1. Introduction
+
+The ability of jointly reading and perceiving under sufficient context has become essential in large
+language models (LLMs) for acquiring general world knowledge and advanced intelligence, as well as
+
+Corresponding author(s): biaojiaxing@google.com. Note, ∗ Core contributors. † Project Advisor.
+© 2025 Google. All rights reserved
+
+ReasoningCodeXMultimodalLongContext102029392468612182391826358162432270MReasoningCodeXMultimodalLongContext12253749471115918273612253750112233441BReasoningCodeXMultimodalLongContext1631476281725331326395115304459142943574BReasoningCodeXMultimodalLongContext5914187152230713202791726357132027ReasoningCodeXMultimodalLongContext71522301225375010203040132538508152330ReasoningCodeXMultimodalLongContext919283816324763132740531632486416314763T5Gemma2Gemma3 
+ 
+ 
+ 
+ 
+ 
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Figure 2 | Overview of T5Gemma 2. Encoder/decoder parameters are initialized from the pretrained
+decoder-only model, and then pretrained with UL2. We tie all word embeddings (in blue) and merge
+decoder self- and cross-attention sub-layers. Image is preprocessed by SigLIP into 256 embedding
+tokens and fed to the encoder for vision understanding (see [img] for illustration).
+
+for many real-world applications, regardless of model architectures (Achiam et al., 2023; Anthropic,
+2024; Comanici et al., 2025). In recent years, the encoder-decoder architecture has regained increasing
+interests in LLMs for its competitive scaling properties and flexible architectures (Zhang et al., 2022,
+2025a) and promising pre-/post-training performance (Ao et al., 2022; Elfeki et al., 2025; Li et al.,
+2023; Raffel et al., 2020; Tay et al., 2022; Wang et al., 2022; Xue et al., 2021, 2022). Particularly,
+T5Gemma establishes modern, general-purpose encoder-decoder LLMs with non-trivial performance
+across benchmarks (Zhang et al., 2025b). Still, the vast majority of these models (if not all) are blind,
+operating exclusively on text-based data with limited context length – a substantial gap compared to
+the advanced decoder-only LLMs (Team et al., 2025a,b; Xu et al., 2025).
+
+In this paper, we fill this gap and present T5Gemma 2, a new family of lightweight open encoder-
+decoder LLMs with strong multilingual, multimodal and long-context capabilities. T5Gemma 2 follows
+the adaptation recipe from T5Gemma (Zhang et al., 2025b): initializing model parameters from a
+pretrained decoder-only checkpoint and then adapting them with the UL2 objective as in Figure 2.
+We further extend the recipe from the text-only realm to multimodal and long-context based on the
+powerful Gemma 3 models (Team et al., 2025a). For vision modeling, T5Gemma 2 reuses the same
+vision encoder from Gemma 3 and keeps it frozen; vision tokens are always fed to the encoder and
+all encoder tokens always have full visibility to each other in the self attention. For long-context
+modeling, we adopt the positional interpolation methods (Chen et al., 2023; Team et al., 2025a). We
+also propose two strategies to save model parameters and improve the efficiency: 1) tying all word
+embeddings across encoder and decoder; and 2) merging the decoder self- and cross-attention into a
+single unified merged attention.
+
+T5Gemma 2 features three model sizes: 270M-270M, 1B-1B, and 4B-4B. We pretrain each model
+on ∼2T tokens with an input/output sequence length up to 16K, and perform evaluation following
+Gemma 3. As in Figure 1, the resulting T5Gemma 2 model shows competitive performance across
+different capabilities, matching and even surpassing its Gemma 3 counterpart in both pre- and post-
+training. Particularly, T5Gemma 2 270M-270M and 1B-1B yield encouraging multimodal performance
+even though their Gemma 3 base models are text-only, resonating with PaliGemma (Steiner et al.,
+2024). Besides, T5Gemma 2 delivers consistently improved long-context performance (up to 128K)
+despite of being pretrained on shorter sequences (only 16K), suggesting the special advantage of
+the encoder-decoder architecture on handling long context (Zhang et al., 2025a). We present the
+detailed results and also provide ablations justifying our architectural designs.
+
+2
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Setting
+
+Baseline
+w/ Tied Embedding
+w/ Merged Attention
+
+Performance #Parameters
+
+47.8
+47.7
+47.5
+
+4417M (1180M)
+4417M (590M)
+4049M (1180M)
+
+w/ Cross Attention on Global Layers Only
+
+46.5
+
+4233M (1180M)
+
+Table 1 | Architectural ablations for T5Gemma 2B-2B based on Gemma 2 2B. All models are pretrained
+on 400B tokens with PrefixLM+KD data. The performance is measured following the T5Gemma
+pretraining evaluation (Zhang et al., 2025b); #Parameters indicates the number of model (embedding)
+parameters.
+
+2. T5Gemma 2
+
+T5Gemma 2 is a Transformer-based encoder-decoder LLM (Vaswani et al., 2017). Its basic building
+block follows Gemma 3: grouped-query attention (Ainslie et al., 2023) with QK-norm (Dehghani
+et al., 2023), pre- and post-norm with RMSNorm (Zhang and Sennrich, 2019), RoPE for positional
+encoding (Su et al., 2024), and interleaved local and global attention layers with a ratio of 5:1. To
+improve long-context modeling, we set the RoPE base frequency to 10k and 1M for local and global
+attention layers, respectively (Team et al., 2025a). The 400M SigLIP encoder is adopted as the vision
+encoder (Zhai et al., 2023), which transforms an image to 256 embedding tokens and is frozen during
+the training.
+
+Tied Embedding T5Gemma uses separate word embeddings for the encoder and the decoder,
+which add a significant amount of model parameters particularly for small models. In T5Gemma
+2, we instead tie all word embeddings (encoder input embedding, decoder input embedding and
+decoder output/softmax embedding) following T5 (Raffel et al., 2020). Table 1 shows that tying
+embeddings leads to nearly no quality change but reduces the parameters by 10.5%, suggesting the
+high redundancy of embedding parameters.
+
+Merged Attention In the encoder-decoder architecture, cross-attention is often represented as a
+separated sub-layer in the decoder block, inserted in between the self-attention and feed-forward
+sub-layers. However, the functionality of the self- and cross-attention shares high similarity: gathering
+relevant information from the past. Inspired by previous studies (Chowdhery et al., 2023; Fu et al.,
+2023; Zhang et al., 2019), we merge these two types of attentions into a single module with shared
+attention parameters.
+
+Concretely, given the encoder output H ∈ ℝ𝑛×𝑑 and the decoder self-attention input X ∈ ℝ𝑚×𝑑,
+
+the merged attention operates as below:
+
+Q ∈ ℝ𝑚×𝑑ℎ = XW𝑞
+K ∈ ℝ(𝑚+𝑛) ×𝑑ℎ = [X; H] W𝑘
+V ∈ ℝ(𝑚+𝑛) ×𝑑ℎ = [X; H] W𝑣
+
+A ∈ ℝ𝑚×𝑑ℎ = SoftMax
+
+(cid:19)
+
+(cid:18) QK𝑇
+√
+𝑑ℎ
+O ∈ ℝ𝑚×𝑑 = AW𝑜
+
+⊙ M
+
+V
+
+(1)
+
+(2)
+
+(3)
+
+(4)
+
+(5)
+
+where 𝑛/𝑚 represents the encoder/decoder input length and 𝑑/𝑑ℎ is model/head dimension. For
+simplicity, we only describe the single head case. W𝑞, W𝑘, W𝑣 ∈ ℝ𝑑×𝑑ℎ and W𝑜 ∈ ℝ𝑑ℎ ×𝑑 are regular
+
+3
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Model
+
+Vision Encoder
+
+Embedding
+
+Non-Embedding
+
+Encoder Decoder
+
+270M-270M
+1B-1B
+4B-4B
+
+417M
+417M
+417M
+
+100M
+100M
+168M
+302M
+698M
+698M
+675M 3209M 3209M
+
+Table 2 | Number of parameters for T5Gemma 2 models.
+
+attention weight parameters. We concatenate the encoder output and decoder input [X; H] such that
+both types of attention can be performed together. Note attention logits are also normalized jointly,
+similar to the decoder-only models. The masking M ∈ ℝ𝑚× (𝑚+𝑛) handles the visibility to tokens from
+both encoder and decoder.
+
+Merged attention narrows the architectural differences between the T5Gemma 2 decoder and the
+Gemma 3 decoder (see Figure 2), which eases the parameter initialization. Similarly, the encoder
+and decoder in T5Gemma 2 have roughly the same model parameters (see Table 2). Ablations in
+Table 1 show that merged attention saves 6.5% parameters and results in slight quality reduction1,
+∼0.3 points on average, which we consider as an acceptable trade-off.
+
+Rejected Ablation: Cross-Attention on Global Layers Only By default, T5Gemma applies cross-
+attention to all decoder layers following the standard encoder-decoder architecture (Vaswani et al.,
+2017). However, this adds non-ignorable computational cost particularly considering the autoregres-
+sive inference bottleneck and its global-attention structure. We thus explored a variant where we
+only apply it to decoder layers with global self-attention sub-layers, i.e. adding one cross-attention
+sub-layer every six decoder layers. Unfortunately, the experiments show a substantial quality drop by
+∼1.3 points on average (see Table 1). We consider this direction as reasonable but will need more
+efforts to retain the performance.
+
+3. Setup
+
+3.1. Pretraining
+
+Data Our pretraining data follows Gemma 3, which is a mixture of multilingual web documents,
+code, mathematical corpus and images (Team et al., 2025a). We preprocess the data with UL2 (Tay
+et al., 2022) into ≤16K input sequences paired with ≤16K target outputs. Specifically, for text data,
+we apply the following five denoising tasks: (𝜇 = 3, 𝑟 = 0.15, 𝑛), (𝜇 = 12, 𝑟 = 0.5, 𝑛), (𝜇 = 32, 𝑟 =
+0.15, 𝑛), (𝜇 = 32, 𝑟 = 0.5, 𝑛) and (𝜇 = 3
+𝐿, 𝑟 = 0.75, 1) with a mixing ratio of 1:1:1:1:4, where 𝜇 is the
+4
+mean span length, 𝑟 is the corruption rate, 𝑛 is the number of corrupted spans, and 𝐿 is the input
+sequence length. We refer the readers to Tay et al. (2022) for more details. For vision data, we only
+use prefix language modeling: all input tokens until the end of the final image are used as prefix, and
+the remaining text tokens are used as targets. Note, distillation is not used. The final pretraining
+data includes ∼2T tokens.
+
+Optimization We initialize T5Gemma 2 parameters from the corresponding Gemma 3 pretraining
+checkpoint. All models are trained with a batch size of 4.2M tokens, and with the standard cross-
+entropy loss. Learning rate follows cosine decay with a warmup step of 100. To stabilize the training,
+
+1Note the parameter reduction (6.5%) is based on the total parameters, i.e, both model and embedding parameters.
+
+4
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Model
+
+Setting
+
+Pretraining Performance
+
+T5Gemma 2 270M-270M
+
+T5Gemma 2 1B-1B
+
+PrefixLM + KD
+UL2 + KD
+UL2
+
+PrefixLM + KD
+UL2 + KD
+UL2
+
+30.1
+30.5
+30.6
+
+38.8
+40.2
+39.8
+
+Table 3 | Data ablations for T5Gemma 2. Note the pretraining performance is measured following
+T5Gemma (Zhang et al., 2025b), similar to Table 1. UL2 and UL2+KD deliver comparable performance,
+which generally surpasses PrefixLM+KD.
+
+we apply global gradient clipping at 1.0 and weight decay. We perform a simple grid search to decide
+the optimal learning rate for each model. The final pretraining checkpoint is created by averaging
+over the last 5 checkpoints (saved with an interval of 10K steps) Wortsman et al. (2022).
+
+3.2. Post-training
+
+We also perform slight instruction tuning to showcase the strengths of encoder-decoder LLMs on
+downstream finetuning. Different from Gemma 3 post-training which includes distillation from
+stronger teacher and RL finetuning (Team et al., 2025a), we only apply distillation learning and
+train models with much less compute. Note the post-training performance in this paper should be
+considered as the lowerbound.
+
+3.3. Evaluation
+
+We evaluate the models following Gemma 3 (Team et al., 2025a). Benchmarks include:
+
+Reasoning and factuality: HellaSwag (Zellers et al., 2019), BoolQ (Clark et al., 2019), PIQA (Bisk
+
+et al., 2020), SIQA (Sap et al., 2019), TriviaQA (Joshi et al., 2017), Natural Questions (Kwiatkowski
+et al., 2019), ARC-C and ARC-E (Clark et al., 2018), WinoGrande (Sakaguchi et al., 2021),
+BBH (Suzgun et al., 2022), DROP (Dua et al., 2019), and BIG-Bench Extra Hard (Kazemi et al.,
+2025).
+
+Stem and code: MMLU-Pro (Wang et al., 2024), AGIEval (Zhong et al., 2023), MATH (Hendrycks
+et al., 2021), GSM8K (Cobbe et al., 2021), GPQA (Rein et al., 2023), MBPP (Austin et al., 2021),
+and HumanEval (Chen et al., 2021).
+
+Multilingual: MGSM (Shi et al., 2022), Global-MMLU-Lite (Singh et al., 2024), WMT24++ (Deutsch
+
+et al., 2025), FLoRes (Goyal et al., 2022), and XQuAD (Artetxe et al., 2019).
+
+Multimodal: COCO Caption (Chen et al., 2015), DocVQA (Mathew et al., 2021), InfographicVQA (Mathew
+et al., 2022), MMMU (Yue et al., 2024), TextVQA (Singh et al., 2019), RealWorldQA (xAI,
+2024), AI2D (Kembhavi et al., 2016), ChartQA (Masry et al., 2022), VQA v2 (Goyal et al., 2017),
+TallyQA (Acharya et al., 2019), and SpatialSense VQA (Yang et al., 2019).
+
+Long Context: RULER (Hsieh et al., 2024) and MRCR (Vodrahalli et al., 2024).
+
+5
+
+y
+t
+i
+l
+a
+u
+t
+c
+a
+F
+d
+n
+a
+
+i
+
+g
+n
+n
+o
+s
+a
+e
+R
+
+e
+d
+o
+C
+d
+n
+a
+m
+e
+t
+S
+
+l
+a
+u
+g
+n
+
+i
+l
+i
+t
+l
+u
+M
+
+l
+a
+d
+o
+m
+
+i
+t
+l
+u
+M
+
+Benchmark
+
+HellaSwag
+BoolQ
+PIQA
+SocialIQA
+TriviaQA
+Natural Questions
+ARC-c
+ARC-e
+WinoGrande
+BIG-Bench Hard
+DROP
+Average
+
+MMLU (Pro COT)
+AGIEval
+MATH
+GSM8K
+GPQA
+MBPP
+HumanEval
+Average
+
+MGSM
+Global-MMLU-Lite
+WMT24++ (ChrF)
+FloRes
+XQuAD (all)
+Average
+
+COCOcap
+DocVQA (val)∗
+InfoVQA (val)∗
+MMMU (pt)
+TextVQA (val)
+RealWorldQA
+AI2D
+ChartQA
+VQAv2
+TallyQA
+SpatialSense VQA
+Average
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Gemma 3
+
+T5Gemma
+
+T5Gemma 2
+
+270M
+
+1B
+
+4B 2B-2B 9B-9B 270M-270M 1B-1B 4B-4B
+
+39.4
+60.5
+67.7
+45.0
+14.3
+2.8
+28.2
+56.1
+51.9
+23.6
+30.9
+38.2
+
+7.7
+20.8
+1.1
+0.5
+6.9
+0.6
+2.4
+5.7
+
+1.6
+27.0
+18.3
+20.3
+20.7
+17.6
+
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+60.4
+66.1
+74.7
+46.9
+39.8
+9.6
+39.4
+72.2
+58.7
+28.3
+42.4
+49.0
+
+9.8
+21.8
+1.5
+1.3
+9.6
+9.4
+6.1
+8.5
+
+1.9
+24.5
+36.7
+29.6
+43.8
+27.3
+
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+74.9
+79.1
+79.7
+49.0
+65.7
+20.2
+56.3
+81.9
+68.0
+50.9
+60.3
+62.4
+
+28.9
+41.6
+24.6
+38.1
+15.0
+45.8
+36.0
+32.8
+
+35.3
+57.0
+48.4
+39.2
+68.1
+49.6
+
+101.8
+73.0
+44.0
+37.9
+58.7
+43.5
+63.1
+63.2
+63.8
+42.8
+51.3
+58.5
+
+66.8
+51.7
+46.5
+37.8
+50.7
+
+74.8
+75.5
+79.0
+49.8
+51.2
+15.1
+52.4
+77.1
+69.9
+54.8
+61.3
+60.1
+
+30.7
+35.2
+22.1
+46.7
+18.5
+38.0
+26.8
+31.1
+
+35.2
+40.3
+40.8
+31.8
+58.0
+41.2
+
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+80.9
+85.7
+81.1
+50.1
+75.2
+28.6
+65.6
+85.4
+78.8
+74.4
+75.6
+71.0
+
+47.9
+53.6
+39.6
+74.7
+23.9
+53.8
+41.5
+47.9
+
+65.6
+66.1
+51.5
+42.8
+73.8
+59.9
+
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+-
+
+0.2
+0.5
+35.3
+15.6
+12.9
+
+0.0
+0.5
+46.0
+22.3
+17.2
+
+41.1
+57.4
+66.5
+46.1
+14.8
+3.0
+27.9
+57.9
+53.9
+22.9
+39.4
+39.2
+
+10.6
+20.9
+1.5
+1.7
+9.6
+5.6
+4.3
+7.7
+
+1.8
+23.4
+26.9
+23.9
+40.8
+23.4
+
+69.6
+41.6
+20.2
+22.7
+34.1
+27.2
+26.5
+29.2
+38.8
+26.4
+50.4
+35.1
+
+57.3
+25.5
+23.4
+20.4
+31.7
+
+62.9
+68.5
+74.3
+47.7
+29.0
+8.9
+41.0
+67.7
+60.8
+28.5
+51.2
+49.1
+
+16.1
+23.8
+4.5
+9.1
+10.5
+25.2
+15.2
+14.9
+
+8.9
+33.1
+40.9
+33.8
+63.1
+36.0
+
+86.0
+66.6
+36.4
+28.4
+53.1
+42.4
+44.8
+50.2
+57.8
+32.2
+50.2
+49.8
+
+69.2
+35.1
+38.6
+32.5
+43.8
+
+77.4
+79.3
+79.2
+49.9
+53.1
+17.2
+56.1
+74.3
+71.6
+43.7
+66.7
+60.8
+
+33.2
+41.1
+21.2
+44.0
+17.6
+44.8
+30.5
+33.2
+
+42.1
+53.5
+49.2
+41.8
+70.6
+51.4
+
+105.4
+74.7
+46.0
+39.4
+58.4
+46.1
+61.6
+66.0
+62.7
+39.6
+51.7
+59.2
+
+81.7
+57.6
+49.4
+39.8
+57.1
+
+t Ruler 32K
+x
+e
+t
+n
+o
+C
+g
+n
+o
+L
+
+Ruler 128K
+MRCR 32K
+MRCR 128K
+Average
+
+21.3
+4.4
+14.6
+7.8
+12.0
+
+23.3
+7.0
+20.8
+13.8
+16.2
+
+Table 4 | Detailed pretraining results for Gemma 3, T5Gemma, and T5Gemma 2. Note Gemma 3
+270M&1B and T5Gemma 2B-2B&9B-9B are text-only models. ∗: approximate results which can’t
+be compared across papers. In general, T5Gemma 2 shows strong multi-modal and long-context
+performance. Best results are highlighted in bold.
+
+6
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Benchmark
+
+Gemma 3
+
+T5Gemma
+
+T5Gemma 2
+
+270M
+
+1B
+
+4B 2B-2B 9B-9B 270M-270M 1B-1B 4B-4B
+
+i
+
+g GPQA Diamond
+n
+BIG-Bench Hard
+n
+o
+BIG-Bench Extra Hard
+s
+a
+e
+Average
+R
+
+e
+d
+o
+C
+d
+n
+a
+m
+e
+t
+S
+
+l
+a
+u
+g
+n
+
+i
+l
+i
+t
+l
+u
+M
+
+l
+a
+d
+o
+m
+
+i
+t
+l
+u
+M
+
+MMLU (Pro)
+HiddenMath
+MBPP
+HumanEval
+Natural2Code
+GSM8K
+Average
+
+Global MMLU Lite
+WMT24++
+Average
+
+MMMU (val)
+DocVQA∗
+InfoVQA∗
+TextVQA
+AI2D
+ChartQA
+VQAv2 (val)
+Average
+
+t Ruler 32K
+x
+e
+t
+n
+o
+C
+g
+n
+o
+L
+
+Ruler 128K
+MRCR 32K
+MRCR 128K
+Average
+
+19.7
+10.0
+1.7
+10.5
+
+1.3
+0.4
+11.4
+14.6
+16.9
+1.9
+7.8
+
+19.7
+17.5
+18.6
+
+-
+-
+-
+-
+-
+-
+-
+-
+
+14.1
+36.3
+7.2
+19.2
+
+13.2
+11.4
+36.0
+43.9
+58.0
+35.9
+33.1
+
+34.9
+34.7
+34.8
+
+-
+-
+-
+-
+-
+-
+-
+-
+
+16.2
+0.0
+10.1
+6.6
+8.2
+
+31.2
+2.5
+14.7
+14.0
+15.6
+
+24.7
+71.7
+8.7
+35.1
+
+40.9
+35.1
+62.6
+70.7
+72.0
+84.0
+60.9
+
+53.4
+47.0
+50.2
+
+47.3
+74.1
+40.0
+57.5
+75.0
+69.0
+59.3
+60.3
+
+61.3
+46.9
+50.3
+41.9
+50.1
+
+20.7
+58.2
+9.1
+29.3
+
+32.3
+4.4
+43.8
+46.3
+56.0
+69.7
+42.1
+
+50.4
+39.1
+44.8
+
+-
+-
+-
+-
+-
+-
+-
+-
+
+33.3
+80.4
+10.6
+41.5
+
+54.5
+13.3
+64.4
+74.4
+75.4
+89.9
+62.0
+
+67.3
+48.0
+57.7
+
+-
+-
+-
+-
+-
+-
+-
+-
+
+0.1
+0.2
+53.6
+24.3
+19.6
+
+0.7
+0.2
+56.7
+30.3
+21.9
+
+16.2
+34.6
+3.5
+18.1
+
+10.5
+3.3
+32.0
+42.1
+54.6
+36.5
+29.8
+
+28.6
+24.6
+26.6
+
+30.8
+42.2
+19.9
+35.0
+48.8
+36.4
+29.2
+34.6
+
+52.9
+11.2
+20.9
+21.9
+26.8
+
+23.2
+59.2
+6.3
+29.6
+
+25.9
+17.3
+54.8
+61.6
+68.1
+72.1
+50.0
+
+42.3
+38.5
+40.4
+
+37.8
+63.2
+33.4
+28.5
+69.6
+56.8
+61.2
+50.1
+
+47.5
+6.4
+34.8
+31.5
+30.1
+
+27.8
+75.0
+10.4
+37.7
+
+44.4
+28.8
+66.8
+76.8
+72.9
+88.6
+63.1
+
+59.6
+46.5
+53.0
+
+47.8
+75.2
+43.5
+59.0
+78.3
+75.0
+67.3
+63.7
+
+83.1
+39.5
+69.8
+57.7
+62.5
+
+Table 5 | Detailed post-training results for Gemma 3, T5Gemma, and T5Gemma 2. T5Gemma 2
+outperforms Gemma 3 on most capabilities despite its lightweight post-training.
+
+4. Results
+
+PrefixLM+KD, UL2, vs. UL2+KD: Do distillation and training objective matter? T5Gemma
+ablates the effect of different pretraining data (PrefixLM+KD vs. UL2), showing mixed results. In
+T5Gemma 2, we further examine these options and also compare to UL2+KD, where we use teacher
+logits for real target tokens and one-hot logits for special masking tokens.
+
+Table 3 shows that PrefixLM+KD generally performs the worst while UL2(+KD) is consistently
+better for models ≤ 1B-1B. UL2+KD performs slightly better at 1B-1B than UL2 by ∼0.4 points on
+average. With T5Gemma results, we argue that the effect of distillation highly depends on the teacher
+and student modeling capacity (Zhou et al., 2019). We decided to drop the distillation due to its
+expensive data loading overhead and simply use UL2 for T5Gemma 2.
+
+Text-only LLMs can be adapted into strong multimodal and long-context encoder-decoder
+models. While Gemma 3 270M and 1B are text-only and context limited, Table 4 shows that
+our adaptation recipe successfully adapts them into multimodal and long-context with non-trivial
+
+7
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+performance, resonating with previous findings (Chen et al., 2023; Steiner et al., 2024). For example,
+T5Gemma 2 1B-1B yields an average multimodal and long-context result of 49.8 and 43.8, lagging
+behind Gemma 3 4B by only 8.7 and 6.9 points, respectively, despite being much smaller. We
+ascribe this to the special architecture of encoder-decoder models, where the encoder parameters are
+exclusively used for input/vision understanding with bidirectional attention, and the cross-attention
+allows for attending to high-level representations of the input.
+
+T5Gemma 2 achieves competitive pretraining performance and improved post-training per-
+formance than Gemma 3. Overall, T5Gemma 2 270M-270M and 1B-1B substantially outperform
+Gemma 3 270M and 1B after pretraining across benchmarks, respectively. It performs on par with or
+slightly better than Gemma 3 at 4B-4B scale, as shown in Table 4. After post-training, T5Gemma 2
+generally surpasses Gemma 3 despite its lightweight finetuning, as shown in Table 5, echoing with pre-
+vious findings (Wang et al., 2022; Zhang et al., 2025a,b). Note the post-training result for T5Gemma
+2 is for illustration only, and we believe it could be significantly enhanced with comprehensive RL
+learning.
+
+We note that T5Gemma 2 shows consistently better long-context and multi-modal performance
+than Gemma 3 and T5Gemma. This demonstrates 1) the adaptation recipe from T5Gemma generalizes
+across modalities, and 2) the unique adaptability of encoder-decoder models. We hope these insights
+can inspire further exploration on the encoder-decoder architecture for general-purpose language
+modeling.
+
+5. Conclusion
+
+We have presented T5Gemma 2, the new collection of vision-language encoder-decoder foundation
+model. T5Gemma 2 was built by adapting the pretrained decoder-only Gemma 3 models into encoder-
+decoder on ∼2T UL2 tokens. We ablated several architecture designs and integrated two proposal to
+save model parameters: tied embeddings across encoder and decoder, and merged attention unifying
+decoder self- and cross-attention sub-layers. The resulting decoder architecture resembles the encoder
+architecture, facilitating the adaptation from decoder-only models.
+
+T5Gemma 2 accepts text and/or image as inputs to the encoder, and generates response text
+from the decoder. We evaluated the models across a range of benchmarks, covering five capabilities:
+reasoning and factuality, stem and coding, multilingual, multimodal and long-context. In general,
+T5Gemma 2 shows competitive pretraining performance than Gemma 3 and improved post-training
+performance across capabilities.
+
+Especially, T5Gemma 2 shows strong multimodal and long-context performance, thanks to its
+encoder-decoder architecture. Unlike decoder-only LLMs, T5Gemma 2 has a dedicated set of encoder
+parameters for input/vision or prompt understanding. Its cross-attention over the encoder outputs
+also endows it with better ability on retrieving relevant information from the inputs.
+
+Beyond standalone usage, T5Gemma 2 serves as a robust foundation for training high-quality
+downstream embedding models. For example, EmbeddingGemma (Vera et al., 2025) leverages
+T5Gemma 2 checkpoints to achieve state-of-the-art performance on text retrieval benchmarks.
+
+We released all three pretrained checkpoints (270M-270M, 1B-1B and 4B-4B) to facilitate the
+evaluation, adaptation and research by the community. Note, to the best of our knowledge, T5Gemma
+2 presents itself as the first capable long-context encoder-decoder LLMs (up to 128K) in the community.
+By offering novel insights into encoder-decoder LLMs, we hope this work to be a catalyst for future
+innovation, ultimately benefiting the development of more sophisticated and powerful LLMs.
+
+8
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+Acknowledgments
+
+We’d like to thank Lechao Xiao for his insightful comments. Our work is made possible by the
+dedication and efforts of numerous teams at Google. We would like to acknowledge the support from
+the following teams: DevX, Gemini Infrastructure, Gemini Safety, Gemma, Google Cloud, Google
+Research Responsible AI, Kaggle, and Gemini Encoder-heavy.
+
+References
+
+M. Acharya, K. Kafle, and C. Kanan. Tallyqa: Answering complex counting questions. In Proceedings
+
+of the AAAI conference on artificial intelligence, volume 33, pages 8076–8084, 2019.
+
+J. Achiam, S. Adler, S. Agarwal, L. Ahmad, I. Akkaya, F. L. Aleman, D. Almeida, J. Altenschmidt,
+
+S. Altman, S. Anadkat, et al. Gpt-4 technical report. arXiv preprint arXiv:2303.08774, 2023.
+
+J. Ainslie, J. Lee-Thorp, M. De Jong, Y. Zemlyanskiy, F. Lebrón, and S. Sanghai. Gqa: Training general-
+ized multi-query transformer models from multi-head checkpoints. arXiv preprint arXiv:2305.13245,
+2023.
+
+Anthropic. The claude 3 model family: Opus, sonnet, haiku. 2024. URL https://www.anthropic.
+
+com/.
+
+J. Ao, R. Wang, L. Zhou, C. Wang, S. Ren, Y. Wu, S. Liu, T. Ko, Q. Li, Y. Zhang, et al. Speecht5:
+Unified-modal encoder-decoder pre-training for spoken language processing. In Proceedings of the
+60th annual meeting of the association for computational linguistics (volume 1: Long papers), pages
+5723–5738, 2022.
+
+M. Artetxe, S. Ruder, and D. Yogatama. On the cross-lingual transferability of monolingual represen-
+
+tations. arXiv preprint arXiv:1910.11856, 2019.
+
+J. Austin, A. Odena, M. Nye, M. Bosma, H. Michalewski, D. Dohan, E. Jiang, C. Cai, M. Terry, Q. Le,
+et al. Program synthesis with large language models. arXiv preprint arXiv:2108.07732, 2021.
+
+Y. Bisk, R. Zellers, J. Gao, Y. Choi, et al. Piqa: Reasoning about physical commonsense in natural
+language. In Proceedings of the AAAI conference on artificial intelligence, volume 34, pages 7432–7439,
+2020.
+
+M. Chen, J. Tworek, H. Jun, Q. Yuan, H. P. D. O. Pinto, J. Kaplan, H. Edwards, Y. Burda,
+N. Joseph, G. Brockman, et al. Evaluating large language models trained on code. arXiv preprint
+arXiv:2107.03374, 2021.
+
+S. Chen, S. Wong, L. Chen, and Y. Tian. Extending context window of large language models via
+
+positional interpolation. arXiv preprint arXiv:2306.15595, 2023.
+
+X. Chen, H. Fang, T.-Y. Lin, R. Vedantam, S. Gupta, P. Dollár, and C. L. Zitnick. Microsoft coco captions:
+
+Data collection and evaluation server. arXiv preprint arXiv:1504.00325, 2015.
+
+A. Chowdhery, S. Narang, J. Devlin, M. Bosma, G. Mishra, A. Roberts, P. Barham, H. W. Chung,
+C. Sutton, S. Gehrmann, et al. Palm: Scaling language modeling with pathways. Journal of Machine
+Learning Research, 24(240):1–113, 2023.
+
+C. Clark, K. Lee, M.-W. Chang, T. Kwiatkowski, M. Collins, and K. Toutanova. BoolQ: Exploring
+In J. Burstein, C. Doran, and T. Solorio,
+
+the surprising difficulty of natural yes/no questions.
+
+9
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+editors, Proceedings of the 2019 Conference of the North American Chapter of the Association for
+Computational Linguistics: Human Language Technologies, Volume 1 (Long and Short Papers), pages
+2924–2936, Minneapolis, Minnesota, June 2019. Association for Computational Linguistics. doi:
+10.18653/v1/N19-1300. URL https://aclanthology.org/N19-1300/.
+
+P. Clark, I. Cowhey, O. Etzioni, T. Khot, A. Sabharwal, C. Schoenick, and O. Tafjord. Think you have
+
+solved question answering? try arc, the ai2 reasoning challenge. arXiv:1803.05457v1, 2018.
+
+K. Cobbe, V. Kosaraju, M. Bavarian, M. Chen, H. Jun, L. Kaiser, M. Plappert, J. Tworek, J. Hilton,
+R. Nakano, C. Hesse, and J. Schulman. Training verifiers to solve math word problems. arXiv
+preprint arXiv:2110.14168, 2021.
+
+G. Comanici, E. Bieber, M. Schaekermann, I. Pasupat, N. Sachdeva, I. Dhillon, M. Blistein, O. Ram,
+D. Zhang, E. Rosen, et al. Gemini 2.5: Pushing the frontier with advanced reasoning, multimodality,
+long context, and next generation agentic capabilities. arXiv preprint arXiv:2507.06261, 2025.
+
+M. Dehghani, J. Djolonga, B. Mustafa, P. Padlewski, J. Heek, J. Gilmer, A. P. Steiner, M. Caron,
+R. Geirhos, I. Alabdulmohsin, et al. Scaling vision transformers to 22 billion parameters.
+In
+International conference on machine learning, pages 7480–7512. PMLR, 2023.
+
+D. Deutsch, E. Briakou, I. R. Caswell, M. Finkelstein, R. Galor, J. Juraska, G. Kovacs, A. Lui, R. Rei,
+J. Riesa, S. Rijhwani, P. Riley, E. Salesky, F. Trabelsi, S. Winkler, B. Zhang, and M. Freitag.
+WMT24++: Expanding the language coverage of WMT24 to 55 languages & dialects. In W. Che,
+J. Nabende, E. Shutova, and M. T. Pilehvar, editors, Findings of the Association for Computational
+Linguistics: ACL 2025, pages 12257–12284, Vienna, Austria, July 2025. Association for Compu-
+tational Linguistics. ISBN 979-8-89176-256-5. doi: 10.18653/v1/2025.findings-acl.634. URL
+https://aclanthology.org/2025.findings-acl.634/.
+
+D. Dua, Y. Wang, P. Dasigi, G. Stanovsky, S. Singh, and M. Gardner. Drop: A reading comprehension
+benchmark requiring discrete reasoning over paragraphs. arXiv preprint arXiv:1903.00161, 2019.
+
+M. Elfeki, R. Liu, and C. Voegele. Return of the encoder: Maximizing parameter efficiency for slms.
+
+arXiv preprint arXiv:2501.16273, 2025.
+
+Z. Fu, W. Lam, Q. Yu, A. M.-C. So, S. Hu, Z. Liu, and N. Collier. Decoder-only or encoder-decoder?
+interpreting language model as a regularized encoder-decoder. arXiv preprint arXiv:2304.04052,
+2023.
+
+N. Goyal, C. Gao, V. Chaudhary, P.-J. Chen, G. Wenzek, D. Ju, S. Krishnan, M. Ranzato, F. Guzmán, and
+A. Fan. The flores-101 evaluation benchmark for low-resource and multilingual machine translation.
+Transactions of the Association for Computational Linguistics, 10:522–538, 2022.
+
+Y. Goyal, T. Khot, D. Summers-Stay, D. Batra, and D. Parikh. Making the v in vqa matter: Elevating
+the role of image understanding in visual question answering. In Proceedings of the IEEE conference
+on computer vision and pattern recognition, pages 6904–6913, 2017.
+
+D. Hendrycks, C. Burns, S. Basart, A. Zou, M. Mazeika, D. Song, and J. Steinhardt. Measuring massive
+multitask language understanding. In International Conference on Learning Representations, 2021.
+URL https://openreview.net/forum?id=d7KBjmI3GmQ.
+
+C.-P. Hsieh, S. Sun, S. Kriman, S. Acharya, D. Rekesh, F. Jia, Y. Zhang, and B. Ginsburg. Ruler: What’s
+the real context size of your long-context language models? arXiv preprint arXiv:2404.06654, 2024.
+
+M. Joshi, E. Choi, D. Weld, and L. Zettlemoyer. triviaqa: A Large Scale Distantly Supervised Challenge
+
+Dataset for Reading Comprehension. arXiv e-prints, art. arXiv:1705.03551, 2017.
+
+10
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+M. Kazemi, B. Fatemi, H. Bansal, J. Palowitch, C. Anastasiou, S. V. Mehta, L. K. Jain, V. Aglietti,
+
+D. Jindal, P. Chen, et al. Big-bench extra hard. arXiv preprint arXiv:2502.19187, 2025.
+
+A. Kembhavi, M. Salvato, E. Kolve, M. Seo, H. Hajishirzi, and A. Farhadi. A diagram is worth a dozen
+
+images. In European conference on computer vision, pages 235–251. Springer, 2016.
+
+T. Kwiatkowski, J. Palomaki, O. Redfield, M. Collins, A. Parikh, C. Alberti, D. Epstein, I. Polosukhin,
+J. Devlin, K. Lee, K. Toutanova, L. Jones, M. Kelcey, M.-W. Chang, A. M. Dai, J. Uszkoreit, Q. Le,
+and S. Petrov. Natural questions: A benchmark for question answering research. Transactions of
+the Association for Computational Linguistics, 7:452–466, 2019. doi: 10.1162/tacl_a_00276. URL
+https://aclanthology.org/Q19-1026/.
+
+J. Li, Z. Tang, Y. Ding, P. Wang, P. Guo, W. You, D. Qiao, W. Chen, G. Fu, Q. Zhu, et al. Openba: An
+open-sourced 15b bilingual asymmetric seq2seq model pre-trained from scratch. arXiv preprint
+arXiv:2309.10706, 2023.
+
+A. Masry, D. X. Long, J. Q. Tan, S. Joty, and E. Hoque. Chartqa: A benchmark for question answering
+
+about charts with visual and logical reasoning. arXiv preprint arXiv:2203.10244, 2022.
+
+M. Mathew, D. Karatzas, and C. Jawahar. Docvqa: A dataset for vqa on document images.
+
+In
+Proceedings of the IEEE/CVF winter conference on applications of computer vision, pages 2200–2209,
+2021.
+
+M. Mathew, V. Bagal, R. Tito, D. Karatzas, E. Valveny, and C. Jawahar. Infographicvqa. In Proceedings
+of the IEEE/CVF Winter Conference on Applications of Computer Vision, pages 1697–1706, 2022.
+
+C. Raffel, N. Shazeer, A. Roberts, K. Lee, S. Narang, M. Matena, Y. Zhou, W. Li, and P. J. Liu. Exploring
+ISSN
+
+the limits of transfer learning with a unified text-to-text transformer. 21(1), jan 2020.
+1532-4435.
+
+D. Rein, B. L. Hou, A. C. Stickland, J. Petty, R. Y. Pang, J. Dirani, J. Michael, and S. R. Bowman. Gpqa:
+
+A graduate-level google-proof q&a benchmark. arXiv preprint arXiv:2311.12022, 2023.
+
+K. Sakaguchi, R. L. Bras, C. Bhagavatula, and Y. Choi. Winogrande: An adversarial winograd schema
+
+challenge at scale. Communications of the ACM, 64(9):99–106, 2021.
+
+M. Sap, H. Rashkin, D. Chen, R. LeBras, and Y. Choi. Socialiqa: Commonsense reasoning about social
+
+interactions. arXiv preprint arXiv:1904.09728, 2019.
+
+F. Shi, M. Suzgun, M. Freitag, X. Wang, S. Srivats, S. Vosoughi, H. W. Chung, Y. Tay, S. Ruder,
+D. Zhou, et al. Language models are multilingual chain-of-thought reasoners. arXiv preprint
+arXiv:2210.03057, 2022.
+
+A. Singh, V. Natarajan, M. Shah, Y. Jiang, X. Chen, D. Batra, D. Parikh, and M. Rohrbach. Towards
+vqa models that can read. In Proceedings of the IEEE/CVF conference on computer vision and pattern
+recognition, pages 8317–8326, 2019.
+
+S. Singh, A. Romanou, C. Fourrier, D. I. Adelani, J. G. Ngui, D. Vila-Suero, P. Limkonchotiwat,
+K. Marchisio, W. Q. Leong, Y. Susanto, et al. Global mmlu: Understanding and addressing cultural
+and linguistic biases in multilingual evaluation. arXiv preprint arXiv:2412.03304, 2024.
+
+A. Steiner, A. S. Pinto, M. Tschannen, D. Keysers, X. Wang, Y. Bitton, A. Gritsenko, M. Minderer,
+A. Sherbondy, S. Long, et al. Paligemma 2: A family of versatile vlms for transfer. arXiv preprint
+arXiv:2412.03555, 2024.
+
+11
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+J. Su, M. Ahmed, Y. Lu, S. Pan, W. Bo, and Y. Liu. Roformer: Enhanced transformer with rotary
+
+position embedding. Neurocomputing, 568:127063, 2024.
+
+M. Suzgun, N. Scales, N. Schärli, S. Gehrmann, Y. Tay, H. W. Chung, A. Chowdhery, Q. V. Le, E. H. Chi,
+D. Zhou, et al. Challenging big-bench tasks and whether chain-of-thought can solve them. arXiv
+preprint arXiv:2210.09261, 2022.
+
+Y. Tay, M. Dehghani, V. Q. Tran, X. Garcia, J. Wei, X. Wang, H. W. Chung, S. Shakeri, D. Bahri,
+T. Schuster, et al. Ul2: Unifying language learning paradigms. arXiv preprint arXiv:2205.05131,
+2022.
+
+G. Team, A. Kamath, J. Ferret, S. Pathak, N. Vieillard, R. Merhej, S. Perrin, T. Matejovicova, A. Ramé,
+
+M. Rivière, et al. Gemma 3 technical report. arXiv preprint arXiv:2503.19786, 2025a.
+
+K. Team, A. Du, B. Yin, B. Xing, B. Qu, B. Wang, C. Chen, C. Zhang, C. Du, C. Wei, et al. Kimi-vl
+
+technical report. arXiv preprint arXiv:2504.07491, 2025b.
+
+A. Vaswani, N. Shazeer, N. Parmar, J. Uszkoreit, L. Jones, A. N. Gomez, L. u. Kaiser, and I. Polo-
+sukhin. Attention is all you need. In I. Guyon, U. V. Luxburg, S. Bengio, H. Wallach, R. Fergus,
+S. Vishwanathan, and R. Garnett, editors, Advances in Neural Information Processing Systems,
+volume 30. Curran Associates, Inc., 2017. URL https://proceedings.neurips.cc/paper_
+files/paper/2017/file/3f5ee243547dee91fbd053c1c4a845aa-Paper.pdf.
+
+H. S. Vera, S. Dua, B. Zhang, I. Naim, F. Chen, G. Cameron, I. Ballantyne, K. Black, Z. Li, et al.
+Embeddinggemma: Powerful and lightweight text representations. arXiv preprint arXiv:2509.20354,
+2025. URL https://arxiv.org/abs/2509.20354.
+
+K. Vodrahalli, S. Ontanon, N. Tripuraneni, K. Xu, S. Jain, R. Shivanna, J. Hui, N. Dikkala, M. Kazemi,
+B. Fatemi, et al. Michelangelo: Long context evaluations beyond haystacks via latent structure
+queries. arXiv preprint arXiv:2409.12640, 2024.
+
+T. Wang, A. Roberts, D. Hesslow, T. L. Scao, H. W. Chung, I. Beltagy, J. Launay, and C. Raffel. What
+language model architecture and pretraining objective works best for zero-shot generalization?
+In K. Chaudhuri, S. Jegelka, L. Song, C. Szepesvari, G. Niu, and S. Sabato, editors, Proceedings
+of the 39th International Conference on Machine Learning, volume 162 of Proceedings of Machine
+Learning Research, pages 22964–22984. PMLR, 17–23 Jul 2022. URL https://proceedings.
+mlr.press/v162/wang22u.html.
+
+Y. Wang, X. Ma, G. Zhang, Y. Ni, A. Chandra, S. Guo, W. Ren, A. Arulraj, X. He, Z. Jiang, et al.
+Mmlu-pro: A more robust and challenging multi-task language understanding benchmark. arXiv
+preprint arXiv:2406.01574, 2024.
+
+M. Wortsman, G. Ilharco, S. Y. Gadre, R. Roelofs, R. Gontijo-Lopes, A. S. Morcos, H. Namkoong,
+A. Farhadi, Y. Carmon, S. Kornblith, et al. Model soups: averaging weights of multiple fine-tuned
+models improves accuracy without increasing inference time. In International conference on machine
+learning, pages 23965–23998. PMLR, 2022.
+
+xAI. Realworldqa. https://x.ai/news/grok-1.5v, 2024.
+
+J. Xu, Z. Guo, H. Hu, Y. Chu, X. Wang, J. He, Y. Wang, X. Shi, T. He, X. Zhu, et al. Qwen3-omni
+
+technical report. arXiv preprint arXiv:2509.17765, 2025.
+
+L. Xue, N. Constant, A. Roberts, M. Kale, R. Al-Rfou, A. Siddhant, A. Barua, and C. Raffel. mt5: A
+massively multilingual pre-trained text-to-text transformer. In Proceedings of the 2021 conference
+
+12
+
+T5Gemma 2: Seeing, Reading, and Understanding Longer
+
+of the North American chapter of the association for computational linguistics: Human language
+technologies, pages 483–498, 2021.
+
+L. Xue, A. Barua, N. Constant, R. Al-Rfou, S. Narang, M. Kale, A. Roberts, and C. Raffel. Byt5:
+Towards a token-free future with pre-trained byte-to-byte models. Transactions of the Association
+for Computational Linguistics, 10:291–306, 2022.
+
+K. Yang, O. Russakovsky, and J. Deng. Spatialsense: An adversarially crowdsourced benchmark for
+spatial relation recognition. In Proceedings of the IEEE/CVF International Conference on Computer
+Vision, pages 2051–2060, 2019.
+
+X. Yue, Y. Ni, K. Zhang, T. Zheng, R. Liu, G. Zhang, S. Stevens, D. Jiang, W. Ren, Y. Sun, et al.
+Mmmu: A massive multi-discipline multimodal understanding and reasoning benchmark for expert
+agi. In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pages
+9556–9567, 2024.
+
+R. Zellers, A. Holtzman, Y. Bisk, A. Farhadi, and Y. Choi. Hellaswag: Can a machine really finish your
+sentence? In Proceedings of the 57th Annual Meeting of the Association for Computational Linguistics,
+2019.
+
+X. Zhai, B. Mustafa, A. Kolesnikov, and L. Beyer. Sigmoid loss for language image pre-training. In
+Proceedings of the IEEE/CVF international conference on computer vision, pages 11975–11986, 2023.
+
+B. Zhang and R. Sennrich. Root mean square layer normalization. Advances in neural information
+
+processing systems, 32, 2019.
+
+B. Zhang, I. Titov, and R. Sennrich. Improving deep transformer with depth-scaled initialization and
+
+merged attention. arXiv preprint arXiv:1908.11365, 2019.
+
+B. Zhang, B. Ghorbani, A. Bapna, Y. Cheng, X. Garcia, J. Shen, and O. Firat. Examining scaling and
+transfer of language model architectures for machine translation. In K. Chaudhuri, S. Jegelka,
+L. Song, C. Szepesvari, G. Niu, and S. Sabato, editors, Proceedings of the 39th International Conference
+on Machine Learning, volume 162 of Proceedings of Machine Learning Research, pages 26176–26192.
+PMLR, 17–23 Jul 2022. URL https://proceedings.mlr.press/v162/zhang22h.html.
+
+B. Zhang, Y. Cheng, S. Shakeri, X. Wang, M. Ma, and O. Firat. Encoder-decoder or decoder-only?
+
+revisiting encoder-decoder large language model. arXiv preprint arXiv:2510.26622, 2025a.
+
+B. Zhang, F. Moiseev, J. Ainslie, P. Suganthan, M. Ma, S. Bhupatiraju, F. Lebron, O. Firat, A. Joulin,
+and Z. Dong. Encoder-decoder gemma: Improving the quality-efficiency trade-off via adaptation.
+arXiv preprint arXiv:2504.06225, 2025b.
+
+W. Zhong, R. Cui, Y. Guo, Y. Liang, S. Lu, Y. Wang, A. Saied, W. Chen, and N. Duan. Agieval: A
+human-centric benchmark for evaluating foundation models. arXiv preprint arXiv:2304.06364,
+2023.
+
+C. Zhou, G. Neubig, and J. Gu. Understanding knowledge distillation in non-autoregressive machine
+
+translation. arXiv preprint arXiv:1911.02727, 2019.
+
+13
+
+

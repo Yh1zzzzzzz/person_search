@@ -1,4 +1,24 @@
-from model import objectives
+"""Model builder for IRRA / T5Gemma2.
+
+Notes on running:
+- Preferred: run as a module from repo root: `python -m model.build --config_file <path>`
+- Also supported: run directly: `python model/build.py --config_file <path>`
+"""
+
+# When executed as a script (e.g. `python model/build.py`), Python won't know the
+# parent package, and absolute imports like `import model` may fail depending on
+# the working directory. This bootstraps sys.path and __package__ so relative
+# imports work consistently.
+if __package__ is None or __package__ == "":
+    import os
+    import sys
+
+    _repo_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    if _repo_root not in sys.path:
+        sys.path.insert(0, _repo_root)
+    __package__ = "model"
+
+from . import objectives
 from .clip_model import Transformer, QuickGELU, LayerNorm, build_CLIP_from_openai_pretrained, convert_weights
 import numpy as np
 import torch
@@ -144,7 +164,51 @@ class IRRA(nn.Module):
 
 
 def build_model(args, num_classes=11003):
+    backbone = getattr(args, "backbone", "clip")
+    if backbone == "t5gemma2":
+        from .T5Gemma2_270 import build_person_search_t5gemma2
+
+        model = build_person_search_t5gemma2(args, num_classes)
+        return model
+
+    if backbone == "t5gemma2_vion_tower":
+        from .t5Geema2_vion_tower import build_person_search_t5gemma2_vion_tower
+
+        model = build_person_search_t5gemma2_vion_tower(args, num_classes)
+        return model
+
     model = IRRA(args, num_classes)
     # covert model to fp16
     convert_weights(model)
     return model
+
+
+def _main():
+    import argparse
+
+    parser = argparse.ArgumentParser(description="Build and print model structure")
+    parser.add_argument(
+        "--config_file",
+        default=None,
+        help="Path to a saved training config (configs.yaml). Example: logs/.../configs.yaml",
+    )
+    parser.add_argument("--num_classes", type=int, default=11003)
+    args_ns = parser.parse_args()
+
+    if args_ns.config_file:
+        from utils.iotools import load_train_configs
+
+        args = load_train_configs(args_ns.config_file)
+    else:
+        # Fallback to default CLI args (may still download/load pretrained weights).
+        # For reproducible printing, prefer `--config_file`.
+        from utils.options import get_args
+
+        args = get_args()
+
+    model = build_model(args, num_classes=args_ns.num_classes)
+    print(model)
+
+
+if __name__ == "__main__":
+    _main()

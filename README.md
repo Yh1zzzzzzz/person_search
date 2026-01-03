@@ -1,19 +1,23 @@
-# Cross-Modal Implicit Relation Reasoning and Aligning for Text-to-Image Person Retrieval
-[![GitHub](https://img.shields.io/badge/license-MIT-green)](https://github.com/anosorae/IRRA/blob/main/LICENSE) [![PWC](https://img.shields.io/endpoint.svg?url=https://paperswithcode.com/badge/cross-modal-implicit-relation-reasoning-and/nlp-based-person-retrival-on-cuhk-pedes)](https://paperswithcode.com/sota/nlp-based-person-retrival-on-cuhk-pedes?p=cross-modal-implicit-relation-reasoning-and)
-
-Official PyTorch implementation of the paper Cross-Modal Implicit Relation Reasoning and Aligning for Text-to-Image Person Retrieval. (CVPR 2023) [arXiv](https://arxiv.org/abs/2303.12501)
-
-## Updates
-- (3/23/2023) Add arXiv link for our paper.
-- (3/18/2023) Add download links of trained models and logs.
-- (3/17/2023) Ensure the reproducibility of our code.
-- (3/13/2023) Code released!
-
-## Highlights
-
-The goal of this work is to enhance global text-to-image person retrieval performance, without requiring any additional supervision and inference cost. To achieve this, we utilize the full CLIP model as our feature extraction backbone. Additionally, we propose a novel cross-modal matching loss (SDM) and an Implicit Relation Reasoning module to mine fine-grained image-text relationships, enabling IRRA to learn more discriminative global image-text representations.
-
-![](images/architecture.png)
+CUDA_VISIBLE_DEVICES=0 \
+python train.py \
+  --name t5_vion_align_mlp_bnneck_cls1e4 \
+  --backbone t5gemma2_vion_tower \
+  --dataset_name CUHK-PEDES \
+  --root_dir training_data \
+  --loss_names 'sdm+id' \
+  --gen_loss_weight 0 \
+  --bnneck \
+  --batch_size 128 \
+  --num_workers 10 \
+  --t5_image_size 448 \
+  --attn_implementation sdpa \
+  --amp --amp_dtype bf16 \
+  --gradient_checkpointing \
+  --lr 1e-5 \
+  --projector_lr 1e-3 \
+  --projector_hidden_dim 2048 \
+  --classifier_lr 1e-4 \
+  --num_epoch 60
 
 
 ## Usage
@@ -66,6 +70,7 @@ python train.py \
 ```
 
 ## Testing
+python quick_check_t5gemma2.py --dataset_name CUHK-PEDES --root_dir training_data --hf_model_name_or_path T5_270M_Base
 
 ```python
 python test.py --config_file 'path/to/model_dir/configs.yaml'

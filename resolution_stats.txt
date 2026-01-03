@@ -1,0 +1,144 @@
+
+Scanning CUHK-PEDES in /root/multimodal/person_search/training_data/CUHK-PEDES/imgs...
+Found 40206 images.
+Processing 40206 images with 16 workers...
+
+==================== Statistics for CUHK-PEDES ====================
+Total valid images: 40206
+
+[Width]
+  Min: 13
+  Max: 374
+  Mean: 90.69
+  Median: 75.0
+
+[Height]
+  Min: 34
+  Max: 800
+  Mean: 247.83
+  Median: 217.0
+
+[Aspect Ratio (W/H)]
+  Mean: 0.38
+  Median: 0.38
+
+[Top 10 Resolutions (WxH)]
+  64x128: 5977 (14.87%)
+  60x160: 3905 (9.71%)
+  48x128: 1297 (3.23%)
+  93x277: 142 (0.35%)
+  87x258: 141 (0.35%)
+  76x225: 97 (0.24%)
+  81x241: 84 (0.21%)
+  99x296: 84 (0.21%)
+  71x210: 78 (0.19%)
+  107x318: 76 (0.19%)
+============================================================
+
+Scanning ICFG-PEDES in /root/multimodal/person_search/training_data/ICFG-PEDES/imgs...
+Found 54521 images.
+Processing 54521 images with 16 workers...
+
+==================== Statistics for ICFG-PEDES ====================
+Total valid images: 54521
+
+[Width]
+  Min: 32
+  Max: 1112
+  Mean: 142.79
+  Median: 121.0
+
+[Height]
+  Min: 70
+  Max: 1915
+  Mean: 377.18
+  Median: 332.0
+
+[Aspect Ratio (W/H)]
+  Mean: 0.38
+  Median: 0.38
+
+[Top 10 Resolutions (WxH)]
+  80x214: 17 (0.03%)
+  78x210: 16 (0.03%)
+  94x264: 14 (0.03%)
+  96x250: 14 (0.03%)
+  78x212: 14 (0.03%)
+  114x308: 14 (0.03%)
+  96x252: 13 (0.02%)
+  88x258: 13 (0.02%)
+  84x222: 13 (0.02%)
+  92x252: 13 (0.02%)
+============================================================
+
+Scanning RSTPReid in /root/multimodal/person_search/training_data/RSTPReid/imgs...
+Found 20505 images.
+Processing 20505 images with 16 workers...
+
+==================== Statistics for RSTPReid ====================
+Total valid images: 20505
+
+[Width]
+  Min: 27
+  Max: 1164
+  Mean: 158.29
+  Median: 126.0
+
+[Height]
+  Min: 55
+  Max: 1915
+  Mean: 399.46
+  Median: 348.0
+
+[Aspect Ratio (W/H)]
+  Mean: 0.40
+  Median: 0.38
+
+[Top 10 Resolutions (WxH)]
+  84x234: 7 (0.03%)
+  74x166: 7 (0.03%)
+  74x186: 7 (0.03%)
+  124x332: 7 (0.03%)
+  122x366: 6 (0.03%)
+  86x268: 6 (0.03%)
+  92x246: 6 (0.03%)
+  94x246: 6 (0.03%)
+  100x288: 6 (0.03%)
+  80x194: 6 (0.03%)
+============================================================
+
+Computing Overall Statistics...
+
+==================== Statistics for ALL DATASETS ====================
+Total valid images: 115232
+
+[Width]
+  Min: 13
+  Max: 1164
+  Mean: 127.37
+  Median: 106.0
+
+[Height]
+  Min: 34
+  Max: 1915
+  Mean: 336.01
+  Median: 295.0
+
+[Aspect Ratio (W/H)]
+  Mean: 0.39
+  Median: 0.38
+
+[Top 10 Resolutions (WxH)]
+  64x128: 5982 (5.19%)
+  60x160: 3914 (3.40%)
+  48x128: 1301 (1.13%)
+  93x277: 145 (0.13%)
+  87x258: 141 (0.12%)
+  76x225: 99 (0.09%)
+  99x296: 87 (0.08%)
+  81x241: 86 (0.07%)
+  71x210: 82 (0.07%)
+  70x184: 81 (0.07%)
+============================================================
+
+Total time elapsed: 1.34 seconds

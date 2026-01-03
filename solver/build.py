@@ -20,8 +20,21 @@ def build_optimizer(args, model):
         if "bias" in key:
             lr = args.lr * args.bias_lr_factor
             weight_decay = args.weight_decay_bias
-        if "classifier" in key or "mlm_head" in key:
+        if "classifier" in key:
+            lr = float(getattr(args, "classifier_lr", args.lr * args.lr_factor))
+        if "mlm_head" in key:
             lr = args.lr * args.lr_factor
+
+        # Projection heads: use the same (larger) learning rate for symmetric alignment.
+        # - t5gemma2_vion_tower: vision_tower_align.*
+        # - t5gemma2: vision_proj.* and text_proj.*
+        # - (also apply to text_proj for symmetry)
+        if ("vision_tower_align" in key) or ("vision_proj" in key) or ("text_proj" in key):
+            lr = float(getattr(args, "projector_lr", 1e-3))
+
+        # BNNeck affine params: keep in the same group as classifier for stability
+        if ("bn_i" in key) or ("bn_t" in key):
+            lr = float(getattr(args, "classifier_lr", args.lr * args.lr_factor))
         
         params += [{"params": [value], "lr": lr, "weight_decay": weight_decay}]
 
