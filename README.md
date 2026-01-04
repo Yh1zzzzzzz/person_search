@@ -68,7 +68,15 @@ python train.py \
 --root_dir 'training_data' \
 --num_epoch 60
 ```
-
+python train.py \
+--name iira \
+--img_aug \
+--batch_size 64 \
+--MLM \
+--loss_names 'sdm+id' \
+--dataset_name 'CUHK-PEDES' \
+--root_dir 'training_data' \
+--num_epoch 60
 ## Testing
 python quick_check_t5gemma2.py --dataset_name CUHK-PEDES --root_dir training_data --hf_model_name_or_path T5_270M_Base
 
