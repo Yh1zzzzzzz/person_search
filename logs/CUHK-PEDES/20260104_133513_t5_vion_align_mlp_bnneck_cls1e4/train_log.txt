@@ -1,0 +1,178 @@
+2026-01-04 13:35:13,766 IRRA INFO: Using 1 GPUs
+2026-01-04 13:35:13,766 IRRA INFO: Namespace(local_rank=0
+ name='t5_vion_align_mlp_bnneck_cls1e4'
+ output_dir='logs/CUHK-PEDES/20260104_133513_t5_vion_align_mlp_bnneck_cls1e4'
+ log_period=100
+ eval_period=1
+ val_dataset='test'
+ resume=False
+ resume_ckpt_file=''
+ backbone='t5gemma2_vion_tower'
+ hf_model_name_or_path='T5_270M_Base'
+ pretrain_choice='ViT-B/16'
+ temperature=0.02
+ img_aug=False
+ cmt_depth=4
+ masked_token_rate=0.8
+ masked_token_unchanged_rate=0.1
+ lr_factor=5.0
+ MLM=False
+ loss_names='sdm+id'
+ mlm_loss_weight=1.0
+ id_loss_weight=1.0
+ bnneck=True
+ gen_loss_weight=0.0
+ gen_prompt='Caption'
+ gen_prompt_length=32
+ feature_dim=1024
+ projector_hidden_dim=2048
+ t5_image_size=448
+ img_size=(384
+ 128)
+ stride_size=16
+ text_length=77
+ vocab_size=49408
+ mm_max_length=512
+ optimizer='Adam'
+ lr=8e-06
+ projector_lr=4e-05
+ classifier_lr=4e-05
+ bias_lr_factor=2.0
+ momentum=0.9
+ weight_decay=4e-05
+ weight_decay_bias=0.0
+ alpha=0.9
+ beta=0.999
+ num_epoch=20
+ milestones=(20
+ 50)
+ gamma=0.1
+ warmup_factor=0.1
+ warmup_epochs=5
+ warmup_method='linear'
+ lrscheduler='cosine'
+ target_lr=0
+ power=0.9
+ dataset_name='CUHK-PEDES'
+ sampler='random'
+ num_instance=4
+ root_dir='training_data'
+ batch_size=128
+ test_batch_size=512
+ num_workers=10
+ training=True
+ amp=True
+ amp_dtype='bf16'
+ grad_accum_steps=1
+ max_grad_norm=0.0
+ gradient_checkpointing=True
+ reuse_mm_encoder_for_image=False
+ tokenizers_parallelism='false'
+ attn_implementation='sdpa'
+ distributed=False)
+2026-01-04 13:35:14,402 IRRA.dataset INFO: => CUHK-PEDES Images and Captions are loaded
+2026-01-04 13:35:14,402 IRRA.dataset INFO: CUHKPEDES Dataset statistics:
+2026-01-04 13:35:14,403 IRRA.dataset INFO: 
++--------+-------+--------+----------+
+| subset |  ids  | images | captions |
++--------+-------+--------+----------+
+| train  | 11003 | 34054  |  68126   |
+|  test  |  1000 |  3074  |   6156   |
+|  val   |  1000 |  3078  |   6158   |
++--------+-------+--------+----------+
+2026-01-04 13:35:22,852 IRRA.dataset INFO: using random sampler
+2026-01-04 13:35:23,762 IRRA INFO: Total params: 802M
+2026-01-04 13:35:24,491 IRRA.train INFO: start training
+2026-01-04 13:49:44,021 IRRA.train INFO: Epoch[1] Iteration[100/533], loss: 36.4542, sdm_loss: 27.0298, id_loss: 9.4245, Base Lr: 8.00e-07
+2026-01-04 14:04:00,283 IRRA.train INFO: Epoch[1] Iteration[200/533], loss: 36.4030, sdm_loss: 26.9866, id_loss: 9.4164, Base Lr: 8.00e-07
+2026-01-04 14:18:16,657 IRRA.train INFO: Epoch[1] Iteration[300/533], loss: 36.3719, sdm_loss: 26.9627, id_loss: 9.4092, Base Lr: 8.00e-07
+2026-01-04 14:32:33,410 IRRA.train INFO: Epoch[1] Iteration[400/533], loss: 36.3507, sdm_loss: 26.9470, id_loss: 9.4037, Base Lr: 8.00e-07
+2026-01-04 14:46:50,349 IRRA.train INFO: Epoch[1] Iteration[500/533], loss: 36.3338, sdm_loss: 26.9357, id_loss: 9.3981, Base Lr: 8.00e-07
+2026-01-04 14:51:27,010 IRRA.train INFO: Epoch 1 done. Time per batch: 8.560[s] Speed: 15.0[samples/s]
+2026-01-04 14:51:27,011 IRRA.train INFO: Validation Results - Epoch: 1
+2026-01-04 14:52:17,825 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.130 | 0.731 | 1.462 | 0.505 | 0.237 |
++------+-------+-------+-------+-------+-------+
+2026-01-04 15:06:40,942 IRRA.train INFO: Epoch[2] Iteration[100/533], loss: 36.2259, sdm_loss: 26.8724, id_loss: 9.3535, Base Lr: 2.24e-06
+2026-01-04 15:20:56,980 IRRA.train INFO: Epoch[2] Iteration[200/533], loss: 36.2134, sdm_loss: 26.8658, id_loss: 9.3476, Base Lr: 2.24e-06
+2026-01-04 15:35:13,037 IRRA.train INFO: Epoch[2] Iteration[300/533], loss: 36.2046, sdm_loss: 26.8600, id_loss: 9.3447, Base Lr: 2.24e-06
+2026-01-04 15:49:30,223 IRRA.train INFO: Epoch[2] Iteration[400/533], loss: 36.1965, sdm_loss: 26.8549, id_loss: 9.3416, Base Lr: 2.24e-06
+2026-01-04 16:03:47,782 IRRA.train INFO: Epoch[2] Iteration[500/533], loss: 36.1892, sdm_loss: 26.8499, id_loss: 9.3392, Base Lr: 2.24e-06
+2026-01-04 16:08:24,806 IRRA.train INFO: Epoch 2 done. Time per batch: 8.559[s] Speed: 15.0[samples/s]
+2026-01-04 16:08:24,808 IRRA.train INFO: Validation Results - Epoch: 2
+2026-01-04 16:09:16,477 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.763 | 3.330 | 5.913 | 1.555 | 0.656 |
++------+-------+-------+-------+-------+-------+
+2026-01-04 16:23:44,973 IRRA.train INFO: Epoch[3] Iteration[100/533], loss: 36.1272, sdm_loss: 26.8172, id_loss: 9.3099, Base Lr: 3.68e-06
+2026-01-04 16:38:01,720 IRRA.train INFO: Epoch[3] Iteration[200/533], loss: 36.1230, sdm_loss: 26.8117, id_loss: 9.3113, Base Lr: 3.68e-06
+2026-01-04 16:52:18,636 IRRA.train INFO: Epoch[3] Iteration[300/533], loss: 36.1150, sdm_loss: 26.8047, id_loss: 9.3104, Base Lr: 3.68e-06
+2026-01-04 17:06:35,393 IRRA.train INFO: Epoch[3] Iteration[400/533], loss: 36.1045, sdm_loss: 26.7951, id_loss: 9.3094, Base Lr: 3.68e-06
+2026-01-04 17:20:51,219 IRRA.train INFO: Epoch[3] Iteration[500/533], loss: 36.0864, sdm_loss: 26.7777, id_loss: 9.3086, Base Lr: 3.68e-06
+2026-01-04 17:25:27,506 IRRA.train INFO: Epoch 3 done. Time per batch: 8.558[s] Speed: 15.0[samples/s]
+2026-01-04 17:25:27,506 IRRA.train INFO: Validation Results - Epoch: 3
+2026-01-04 17:26:19,038 IRRA.eval INFO: 
++------+-------+--------+--------+-------+-------+
+| task |   R1  |   R5   |  R10   |  mAP  |  mINP |
++------+-------+--------+--------+-------+-------+
+| t2i  | 4.077 | 13.580 | 20.289 | 5.758 | 2.580 |
++------+-------+--------+--------+-------+-------+
+2026-01-04 17:40:44,497 IRRA.train INFO: Epoch[4] Iteration[100/533], loss: 32.4116, sdm_loss: 23.1051, id_loss: 9.3066, Base Lr: 5.12e-06
+2026-01-04 17:55:01,875 IRRA.train INFO: Epoch[4] Iteration[200/533], loss: 27.6073, sdm_loss: 18.3041, id_loss: 9.3032, Base Lr: 5.12e-06
+2026-01-04 18:09:19,543 IRRA.train INFO: Epoch[4] Iteration[300/533], loss: 25.1190, sdm_loss: 15.8206, id_loss: 9.2984, Base Lr: 5.12e-06
+2026-01-04 18:23:37,993 IRRA.train INFO: Epoch[4] Iteration[400/533], loss: 23.6121, sdm_loss: 14.3181, id_loss: 9.2940, Base Lr: 5.12e-06
+2026-01-04 18:37:55,768 IRRA.train INFO: Epoch[4] Iteration[500/533], loss: 22.5008, sdm_loss: 13.2120, id_loss: 9.2887, Base Lr: 5.12e-06
+2026-01-04 18:42:32,696 IRRA.train INFO: Epoch 4 done. Time per batch: 8.570[s] Speed: 14.9[samples/s]
+2026-01-04 18:42:32,696 IRRA.train INFO: Validation Results - Epoch: 4
+2026-01-04 18:43:24,113 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 48.814 | 72.547 | 80.994 | 45.157 | 30.351 |
++------+--------+--------+--------+--------+--------+
+2026-01-04 18:57:49,123 IRRA.train INFO: Epoch[5] Iteration[100/533], loss: 17.0142, sdm_loss: 7.7810, id_loss: 9.2332, Base Lr: 6.56e-06
+2026-01-04 19:12:06,228 IRRA.train INFO: Epoch[5] Iteration[200/533], loss: 16.8882, sdm_loss: 7.6619, id_loss: 9.2263, Base Lr: 6.56e-06
+2026-01-04 19:26:23,253 IRRA.train INFO: Epoch[5] Iteration[300/533], loss: 16.6932, sdm_loss: 7.4746, id_loss: 9.2186, Base Lr: 6.56e-06
+2026-01-04 19:40:39,346 IRRA.train INFO: Epoch[5] Iteration[400/533], loss: 16.5734, sdm_loss: 7.3630, id_loss: 9.2105, Base Lr: 6.56e-06
+2026-01-04 19:54:55,060 IRRA.train INFO: Epoch[5] Iteration[500/533], loss: 16.3976, sdm_loss: 7.1958, id_loss: 9.2018, Base Lr: 6.56e-06
+2026-01-04 19:59:31,271 IRRA.train INFO: Epoch 5 done. Time per batch: 8.559[s] Speed: 15.0[samples/s]
+2026-01-04 19:59:31,272 IRRA.train INFO: Validation Results - Epoch: 5
+2026-01-04 20:00:22,854 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 54.792 | 77.242 | 84.763 | 50.185 | 34.898 |
++------+--------+--------+--------+--------+--------+
+2026-01-04 20:14:47,169 IRRA.train INFO: Epoch[6] Iteration[100/533], loss: 14.9940, sdm_loss: 5.8787, id_loss: 9.1153, Base Lr: 8.00e-06
+2026-01-04 20:29:04,288 IRRA.train INFO: Epoch[6] Iteration[200/533], loss: 15.1372, sdm_loss: 6.0325, id_loss: 9.1048, Base Lr: 8.00e-06
+2026-01-04 20:43:21,048 IRRA.train INFO: Epoch[6] Iteration[300/533], loss: 15.0837, sdm_loss: 5.9914, id_loss: 9.0923, Base Lr: 8.00e-06
+2026-01-04 20:57:36,983 IRRA.train INFO: Epoch[6] Iteration[400/533], loss: 15.0131, sdm_loss: 5.9351, id_loss: 9.0780, Base Lr: 8.00e-06
+2026-01-04 21:11:53,613 IRRA.train INFO: Epoch[6] Iteration[500/533], loss: 15.0020, sdm_loss: 5.9358, id_loss: 9.0662, Base Lr: 8.00e-06
+2026-01-04 21:16:30,018 IRRA.train INFO: Epoch 6 done. Time per batch: 8.559[s] Speed: 15.0[samples/s]
+2026-01-04 21:16:30,019 IRRA.train INFO: Validation Results - Epoch: 6
+2026-01-04 21:17:21,082 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 57.342 | 78.769 | 86.274 | 52.139 | 36.490 |
++------+--------+--------+--------+--------+--------+
+2026-01-04 21:31:43,257 IRRA.train INFO: Epoch[7] Iteration[100/533], loss: 14.2386, sdm_loss: 5.3099, id_loss: 8.9287, Base Lr: 7.91e-06
+2026-01-04 21:45:57,918 IRRA.train INFO: Epoch[7] Iteration[200/533], loss: 14.3342, sdm_loss: 5.4185, id_loss: 8.9156, Base Lr: 7.91e-06
+2026-01-04 22:00:12,903 IRRA.train INFO: Epoch[7] Iteration[300/533], loss: 14.3549, sdm_loss: 5.4577, id_loss: 8.8972, Base Lr: 7.91e-06
+2026-01-04 22:14:27,903 IRRA.train INFO: Epoch[7] Iteration[400/533], loss: 14.2588, sdm_loss: 5.3808, id_loss: 8.8780, Base Lr: 7.91e-06
+2026-01-04 22:28:42,969 IRRA.train INFO: Epoch[7] Iteration[500/533], loss: 14.1699, sdm_loss: 5.3108, id_loss: 8.8590, Base Lr: 7.91e-06
+2026-01-04 22:33:18,807 IRRA.train INFO: Epoch 7 done. Time per batch: 8.542[s] Speed: 15.0[samples/s]
+2026-01-04 22:33:18,807 IRRA.train INFO: Validation Results - Epoch: 7
+2026-01-04 22:34:09,942 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 59.016 | 80.621 | 88.044 | 53.748 | 38.149 |
++------+--------+--------+--------+--------+--------+
+2026-01-04 22:48:31,164 IRRA.train INFO: Epoch[8] Iteration[100/533], loss: 13.1232, sdm_loss: 4.4842, id_loss: 8.6390, Base Lr: 7.65e-06
+2026-01-04 23:02:45,355 IRRA.train INFO: Epoch[8] Iteration[200/533], loss: 13.1084, sdm_loss: 4.4974, id_loss: 8.6109, Base Lr: 7.65e-06

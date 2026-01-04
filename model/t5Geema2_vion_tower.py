@@ -4,7 +4,9 @@ import torch.nn as nn
 from transformers import AutoConfig
 
 from .T5Gemma2_270 import PersonSearchT5Gemma2
-
+"""
+图片只通过 vision tower的T5 Gemma2
+"""
 
 class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
     def __init__(
@@ -50,14 +52,9 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
         if hidden_dim <= 0:
             raise ValueError(f"projector_hidden_dim must be positive, got {hidden_dim}")
 
-        # Projector MLP: Linear(input_dim, hidden_dim) -> GELU -> Linear(hidden_dim, embed_dim)
-        self.vision_tower_align = nn.Sequential(
-            nn.Linear(vision_hidden, hidden_dim, bias=False),
-            nn.GELU(),
-            nn.Linear(hidden_dim, int(feature_dim), bias=False),
-        )
-        nn.init.xavier_uniform_(self.vision_tower_align[0].weight)
-        nn.init.xavier_uniform_(self.vision_tower_align[2].weight)
+        # Projector Linear: Linear(input_dim, feature_dim)
+        self.vision_tower_align = nn.Linear(vision_hidden, int(feature_dim), bias=False)
+        nn.init.xavier_uniform_(self.vision_tower_align.weight)
 
     def encode_image_only(self, pixel_values: torch.Tensor) -> torch.Tensor:
         self._validate_pixel_values_shape(pixel_values)
@@ -72,7 +69,7 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
         # Mean-pool over patch tokens
         pooled = last_hidden.mean(dim=1)
 
-        pooled = pooled.to(dtype=self.vision_tower_align[2].weight.dtype)
+        pooled = pooled.to(dtype=self.vision_tower_align.weight.dtype)
         return self.vision_tower_align(pooled)
 
 
@@ -82,6 +79,14 @@ def build_person_search_t5gemma2_vion_tower(args, num_classes: int):
     hf_path = getattr(args, "hf_model_name_or_path", "T5_270M_Base")
     config = AutoConfig.from_pretrained(hf_path, local_files_only=True)
     # config._attn_implementation = "sdpa"
+
+    # Set drop_path_rate for vision tower, text encoder and decoder
+    config.drop_path_rate = 0.1
+    if hasattr(config, "vision_config"):
+        config.vision_config.drop_path_rate = 0.1
+    if hasattr(config, "text_config"):
+        config.text_config.drop_path_rate = 0.1
+
     model = PersonSearchT5Gemma2VisionTower(
         config=config,
         hf_model_name_or_path=hf_path,

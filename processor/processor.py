@@ -51,6 +51,45 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
 
     # train
     for epoch in range(start_epoch, num_epoch + 1):
+        # Freeze/Unfreeze Vision Tower based on warmup
+        # We do this by setting requires_grad. Note that the optimizer already holds references to these parameters.
+        # If requires_grad=False, .grad will be None, and optimizer.step() will skip them (effectively frozen).
+        warmup_epochs = int(getattr(args, "warmup_epochs", 5))
+        
+        # Determine if we should freeze vision tower
+        should_freeze = (epoch <= warmup_epochs)
+        
+        # Helper to find vision tower parameters
+        # Supports both DDP (model.module) and single GPU
+        _model_inner = model.module if hasattr(model, "module") else model
+        
+        # Try to locate vision tower. 
+        # For T5Gemma2: model.encoder.vision_tower
+        # For CLIP/IRRA: model.base_model.visual (if applicable, but user asked for T5Gemma2 context)
+        _vision_tower = None
+        if hasattr(_model_inner, "encoder") and hasattr(_model_inner.encoder, "vision_tower"):
+            if get_rank() == 0:
+                print("✅ 成功找到 Vision Tower，准备冻结逻辑。")
+            _vision_tower = _model_inner.encoder.vision_tower
+        else:
+            if get_rank() == 0:
+                print("❌ 警告：未找到 model.encoder.vision_tower，请检查模型定义！")
+            raise ValueError("Vision Tower not found for freezing logic")
+        
+        if _vision_tower is not None:
+            # Count frozen/unfrozen for logging
+            n_frozen = 0
+            n_total = 0
+            for param in _vision_tower.parameters():
+                n_total += 1
+                param.requires_grad = not should_freeze
+                if should_freeze:
+                    n_frozen += 1
+            
+            if get_rank() == 0:
+                status = "FROZEN" if should_freeze else "UNFROZEN"
+                logger.info(f"Epoch {epoch}: Vision Tower is {status} ({n_frozen}/{n_total} params affected).")
+        
         start_time = time.time()
         for meter in meters.values():
             meter.reset()

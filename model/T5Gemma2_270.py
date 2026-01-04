@@ -8,34 +8,14 @@ from transformers import AutoModelForSeq2SeqLM, PreTrainedModel
 # Loss Functions
 # =============================================================================
 class Objectives:
-    # @staticmethod
-    # def compute_sdm(image_features, text_features, pid, logit_scale):
-    #     # 计算图像-文本匹配损失
-    #     # IMPORTANT: feature norms are not guaranteed to be stable (especially when extracted by pooling).
-    #     # Always L2-normalize before dot product to keep logit scale numerically well-behaved.
-    #     image_features = F.normalize(image_features, dim=1)
-    #     text_features = F.normalize(text_features, dim=1)
-    #     logits = (logit_scale * image_features @ text_features.t())
-    #     targets = (pid.view(-1, 1) == pid.view(1, -1)).float()
-    #     targets = targets / targets.sum(dim=1, keepdim=True).clamp(min=1e-6)
-    #     loss_i2t = -torch.sum(targets * F.log_softmax(logits, dim=1), dim=1).mean()
-    #     loss_t2i = -torch.sum(targets * F.log_softmax(logits.t(), dim=1), dim=1).mean()
-    #     return loss_i2t + loss_t2i
     @staticmethod
     def compute_sdm(image_features, text_features, pid, logit_scale, epsilon=1e-8):
-        """
-        Standard Similarity Distribution Matching (SDM) Loss
-        Implementation based on IRRA (CVPR 2023).
-        
-        Formula: KL(P || Q) = sum( P * (log(P) - log(Q)) )
-        """
         # 1. 特征归一化 (L2 Normalize)
         # 保持数值稳定性，这是计算余弦相似度的前提
         image_features = F.normalize(image_features, dim=1)
         text_features = F.normalize(text_features, dim=1)
 
-        # 2. 计算预测的相似度矩阵 (Logits)
-        # shape: [batch_size, batch_size]
+   
         logits = logit_scale * image_features @ text_features.t()
 
         # 3. 构建真实标签分布 Q (True Matching Distribution)
@@ -108,8 +88,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
 
         # 1. Load Backbone
         print(f"Loading backbone from: {hf_model_name_or_path} ...")
-        # Prefer memory-efficient attention implementations when supported.
-        # SigLIP vision tower in eager mode materializes full attention weights (T*T), which is very VRAM-heavy.
         self.attn_implementation = str(attn_implementation)
         load_kwargs = dict(
             trust_remote_code=True,
@@ -124,7 +102,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             )
             print(f"[T5Gemma2] attn_implementation={self.attn_implementation}")
         except TypeError:
-            # Older transformers versions don't accept attn_implementation.
             self.backbone = AutoModelForSeq2SeqLM.from_pretrained(
                 hf_model_name_or_path,
                 **load_kwargs,
@@ -186,20 +163,20 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         
         print(f">>> Model Configured: Hidden={self.hidden_size} | Default Image Tokens={self.num_image_tokens}")
 
-        # 4. Layers
+        # 视觉投影
         self.vision_proj = nn.Linear(self.hidden_size, feature_dim, bias=False)
+
+        #文本投影头
         hidden_dim = int(projector_hidden_dim)
         if hidden_dim <= 0:
             raise ValueError(f"projector_hidden_dim must be positive, got {hidden_dim}")
 
-        # Text projector MLP: Linear(hidden_size, hidden_dim) -> GELU -> Linear(hidden_dim, feature_dim)
-        # Rationale: T5 text space is non-linear; using an MLP improves mapping capacity and keeps
-        # symmetry with the vision-side projector used in the vision-tower ablation.
-        self.text_proj = nn.Sequential(
-            nn.Linear(self.hidden_size, hidden_dim, bias=False),
-            nn.GELU(),
-            nn.Linear(hidden_dim, feature_dim, bias=False),
-        )
+        # self.text_proj = nn.Sequential(
+        #     nn.Linear(self.hidden_size, hidden_dim, bias=False),
+        #     nn.GELU(),
+        #     nn.Linear(hidden_dim, feature_dim, bias=False),
+        # )
+        self.text_proj = nn.Linear(self.hidden_size, feature_dim, bias=False)
         self.logit_scale = nn.Parameter(torch.ones([]) * (1.0 / temperature))
         self.classifier = nn.Linear(feature_dim, num_classes, bias=False)
 
@@ -214,8 +191,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             nn.init.constant_(self.bn_t.bias, 0.0)
 
         nn.init.xavier_uniform_(self.vision_proj.weight)
-        nn.init.xavier_uniform_(self.text_proj[0].weight)
-        nn.init.xavier_uniform_(self.text_proj[2].weight)
+        nn.init.xavier_uniform_(self.text_proj.weight)
         nn.init.xavier_uniform_(self.classifier.weight)
 
     def _adapt_vision_and_projector_for_image_size(self, image_size: int) -> None:
@@ -280,6 +256,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         if hasattr(vision_tower, "config"):
             vision_tower.config.image_size = image_size
 
+    
     def _mean_pool(self, last_hidden_state, attention_mask):
         mask = attention_mask.to(dtype=last_hidden_state.dtype).unsqueeze(-1)
         summed = (last_hidden_state * mask).sum(dim=1)
@@ -374,7 +351,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         enc_out = self.encoder(input_ids=input_ids, attention_mask=mask)
         # Mean-pool encoder states as the global text feature
         pooled = self._mean_pool(enc_out.last_hidden_state, mask)
-        pooled = pooled.to(dtype=self.text_proj[2].weight.dtype)
+        pooled = pooled.to(dtype=self.text_proj.weight.dtype)
         return self.text_proj(pooled)
 
     # Compatibility with this repo's Evaluator API
@@ -474,6 +451,14 @@ def build_person_search_t5gemma2(args, num_classes: int):
     hf_path = getattr(args, "hf_model_name_or_path", "T5_270M_Base")
     config = AutoConfig.from_pretrained(hf_path, local_files_only=True)
     config._attn_implementation = "sdpa"
+
+    # Set drop_path_rate for vision tower, text encoder and decoder
+    config.drop_path_rate = 0.1
+    if hasattr(config, "vision_config"):
+        config.vision_config.drop_path_rate = 0.1
+    if hasattr(config, "text_config"):
+        config.text_config.drop_path_rate = 0.1
+
     model = PersonSearchT5Gemma2(
         config=config,
         hf_model_name_or_path=hf_path,
