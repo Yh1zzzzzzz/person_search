@@ -109,3 +109,5 @@
 2026-01-05 20:10:16,559 IRRA.train INFO: Epoch[2] Iteration[300/1065], loss: 32.8071, sdm_loss: 28.1338, id_loss: 4.6733, Base Lr: 2.80e-07
 2026-01-05 20:14:26,638 IRRA.train INFO: Epoch[2] Iteration[400/1065], loss: 32.7967, sdm_loss: 28.1234, id_loss: 4.6733, Base Lr: 2.80e-07
 2026-01-05 20:18:36,569 IRRA.train INFO: Epoch[2] Iteration[500/1065], loss: 32.7872, sdm_loss: 28.1140, id_loss: 4.6732, Base Lr: 2.80e-07
+2026-01-05 20:22:46,513 IRRA.train INFO: Epoch[2] Iteration[600/1065], loss: 32.7788, sdm_loss: 28.1051, id_loss: 4.6737, Base Lr: 2.80e-07
+2026-01-05 20:26:56,940 IRRA.train INFO: Epoch[2] Iteration[700/1065], loss: 32.7722, sdm_loss: 28.0981, id_loss: 4.6741, Base Lr: 2.80e-07
