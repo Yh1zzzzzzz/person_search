@@ -46,8 +46,8 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
 
     def _to_scalar(x):
         if torch.is_tensor(x):
-            return float(x.detach().item())
-        return float(x)
+            return x.detach()
+        return x
 
     # train
     for epoch in range(start_epoch, num_epoch + 1):
@@ -179,16 +179,22 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
                 info_str = f"Epoch[{epoch}] Iteration[{n_iter + 1}/{len(train_loader)}]"
                 # log loss and acc info
                 for k, v in meters.items():
-                    if v.avg > 0:
-                        info_str += f", {k}: {v.avg:.4f}"
+                    val = v.avg
+                    if torch.is_tensor(val):
+                        val = val.item()
+                    if val > 0:
+                        info_str += f", {k}: {val:.4f}"
                 info_str += f", Base Lr: {scheduler.get_lr()[0]:.2e}"
                 logger.info(info_str)
         
         tb_writer.add_scalar('lr', scheduler.get_lr()[0], epoch)
         tb_writer.add_scalar('temperature', ret['temperature'], epoch)
         for k, v in meters.items():
-            if v.avg > 0:
-                tb_writer.add_scalar(k, v.avg, epoch)
+            val = v.avg
+            if torch.is_tensor(val):
+                val = val.item()
+            if val > 0:
+                tb_writer.add_scalar(k, val, epoch)
 
 
         scheduler.step()

@@ -299,7 +299,8 @@ def build_dataloader(args, tranforms=None):
                                               dataset.train, args.batch_size,
                                               args.num_instance),
                                           num_workers=num_workers,
-                                          collate_fn=collate)
+                                          collate_fn=collate,
+                                          pin_memory=True)
         elif args.sampler == 'random':
             # TODO add distributed condition
             logger.info('using random sampler')
@@ -307,7 +308,8 @@ def build_dataloader(args, tranforms=None):
                                       batch_size=args.batch_size,
                                       shuffle=True,
                                       num_workers=num_workers,
-                                      collate_fn=collate)
+                                      collate_fn=collate,
+                                      pin_memory=True)
         else:
             logger.error('unsupported sampler! expected softmax or triplet but got {}'.format(args.sampler))
 
@@ -331,11 +333,13 @@ def build_dataloader(args, tranforms=None):
         val_img_loader = DataLoader(val_img_set,
                                     batch_size=args.batch_size,
                                     shuffle=False,
-                                    num_workers=num_workers)
+                                    num_workers=num_workers,
+                                    pin_memory=True)
         val_txt_loader = DataLoader(val_txt_set,
                                     batch_size=args.batch_size,
                                     shuffle=False,
-                                    num_workers=num_workers)
+                                    num_workers=num_workers,
+                                    pin_memory=True)
 
         return train_loader, val_img_loader, val_txt_loader, num_classes
 
@@ -369,9 +373,11 @@ def build_dataloader(args, tranforms=None):
         test_img_loader = DataLoader(test_img_set,
                                      batch_size=args.test_batch_size,
                                      shuffle=False,
-                                     num_workers=num_workers)
+                                     num_workers=num_workers,
+                                     pin_memory=True)
         test_txt_loader = DataLoader(test_txt_set,
                                      batch_size=args.test_batch_size,
                                      shuffle=False,
-                                     num_workers=num_workers)
+                                     num_workers=num_workers,
+                                     pin_memory=True)
         return test_img_loader, test_txt_loader, num_classes

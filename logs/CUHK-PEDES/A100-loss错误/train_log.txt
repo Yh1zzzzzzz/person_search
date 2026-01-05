@@ -1,0 +1,269 @@
+2026-01-05 00:11:50,785 IRRA INFO: Using 1 GPUs
+2026-01-05 00:11:50,785 IRRA INFO: Namespace(local_rank=0
+ name='t5_vion_align_mlp_bnneck_cls1e4'
+ output_dir='logs/CUHK-PEDES/20260105_001150_t5_vion_align_mlp_bnneck_cls1e4'
+ log_period=100
+ eval_period=1
+ val_dataset='test'
+ resume=False
+ resume_ckpt_file=''
+ backbone='t5gemma2_vion_tower'
+ hf_model_name_or_path='T5_270M_Base'
+ pretrain_choice='ViT-B/16'
+ temperature=0.02
+ img_aug=False
+ cmt_depth=4
+ masked_token_rate=0.8
+ masked_token_unchanged_rate=0.1
+ lr_factor=5.0
+ MLM=False
+ loss_names='sdm+id'
+ mlm_loss_weight=1.0
+ id_loss_weight=0.5
+ bnneck=True
+ gen_loss_weight=0.0
+ gen_prompt='Caption'
+ gen_prompt_length=32
+ feature_dim=1024
+ projector_hidden_dim=2048
+ t5_image_size=448
+ img_size=(384
+ 128)
+ stride_size=16
+ text_length=77
+ vocab_size=49408
+ mm_max_length=512
+ optimizer='Adam'
+ lr=8e-06
+ projector_lr=2e-05
+ classifier_lr=2e-05
+ bias_lr_factor=2.0
+ momentum=0.9
+ weight_decay=0.0001
+ weight_decay_bias=0.0
+ alpha=0.9
+ beta=0.999
+ num_epoch=70
+ milestones=(20
+ 50)
+ gamma=0.1
+ warmup_factor=0.1
+ warmup_epochs=5
+ warmup_method='linear'
+ lrscheduler='cosine'
+ target_lr=0
+ power=0.9
+ dataset_name='CUHK-PEDES'
+ sampler='random'
+ num_instance=4
+ root_dir='training_data'
+ batch_size=128
+ test_batch_size=512
+ num_workers=10
+ training=True
+ amp=True
+ amp_dtype='bf16'
+ grad_accum_steps=1
+ max_grad_norm=0.0
+ gradient_checkpointing=True
+ reuse_mm_encoder_for_image=False
+ tokenizers_parallelism='false'
+ attn_implementation='sdpa'
+ distributed=False)
+2026-01-05 00:11:51,633 IRRA.dataset INFO: => CUHK-PEDES Images and Captions are loaded
+2026-01-05 00:11:51,633 IRRA.dataset INFO: CUHKPEDES Dataset statistics:
+2026-01-05 00:11:51,634 IRRA.dataset INFO: 
++--------+-------+--------+----------+
+| subset |  ids  | images | captions |
++--------+-------+--------+----------+
+| train  | 11003 | 34054  |  68126   |
+|  test  |  1000 |  3074  |   6156   |
+|  val   |  1000 |  3078  |   6158   |
++--------+-------+--------+----------+
+2026-01-05 00:12:03,623 IRRA.dataset INFO: using random sampler
+2026-01-05 00:12:05,235 IRRA INFO: Total params: 796M
+2026-01-05 00:12:07,723 IRRA INFO: Safety check: Forcing Vision Tower requires_grad=True before optimizer build.
+2026-01-05 00:12:07,730 IRRA.train INFO: start training
+2026-01-05 00:12:07,738 IRRA.train INFO: Epoch 1: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 00:20:10,000 IRRA.train INFO: Epoch[1] Iteration[100/533], Base Lr: 8.00e-07
+2026-01-05 00:26:57,864 IRRA.train INFO: Epoch[1] Iteration[200/533], Base Lr: 8.00e-07
+2026-01-05 00:33:42,865 IRRA.train INFO: Epoch[1] Iteration[300/533], Base Lr: 8.00e-07
+2026-01-05 00:40:27,584 IRRA.train INFO: Epoch[1] Iteration[400/533], Base Lr: 8.00e-07
+2026-01-05 00:47:12,741 IRRA.train INFO: Epoch[1] Iteration[500/533], Base Lr: 8.00e-07
+2026-01-05 00:49:32,145 IRRA.train INFO: Epoch 1 done. Time per batch: 4.211[s] Speed: 30.4[samples/s]
+2026-01-05 00:49:32,146 IRRA.train INFO: Validation Results - Epoch: 1
+2026-01-05 00:50:07,188 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 00:50:11,127 IRRA.train INFO: Epoch 2: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 00:56:59,463 IRRA.train INFO: Epoch[2] Iteration[100/533], Base Lr: 2.24e-06
+2026-01-05 01:04:07,290 IRRA.train INFO: Epoch[2] Iteration[200/533], Base Lr: 2.24e-06
+2026-01-05 01:10:51,622 IRRA.train INFO: Epoch[2] Iteration[300/533], Base Lr: 2.24e-06
+2026-01-05 01:17:59,517 IRRA.train INFO: Epoch[2] Iteration[400/533], Base Lr: 2.24e-06
+2026-01-05 01:25:15,646 IRRA.train INFO: Epoch[2] Iteration[500/533], Base Lr: 2.24e-06
+2026-01-05 01:27:26,032 IRRA.train INFO: Epoch 2 done. Time per batch: 4.193[s] Speed: 30.5[samples/s]
+2026-01-05 01:27:26,033 IRRA.train INFO: Validation Results - Epoch: 2
+2026-01-05 01:27:58,319 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 01:27:58,340 IRRA.train INFO: Epoch 3: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 01:34:49,661 IRRA.train INFO: Epoch[3] Iteration[100/533], Base Lr: 3.68e-06
+2026-01-05 01:41:34,262 IRRA.train INFO: Epoch[3] Iteration[200/533], Base Lr: 3.68e-06
+2026-01-05 01:48:18,826 IRRA.train INFO: Epoch[3] Iteration[300/533], Base Lr: 3.68e-06
+2026-01-05 01:55:03,469 IRRA.train INFO: Epoch[3] Iteration[400/533], Base Lr: 3.68e-06
+2026-01-05 02:01:50,424 IRRA.train INFO: Epoch[3] Iteration[500/533], Base Lr: 3.68e-06
+2026-01-05 02:04:00,846 IRRA.train INFO: Epoch 3 done. Time per batch: 4.057[s] Speed: 31.5[samples/s]
+2026-01-05 02:04:00,846 IRRA.train INFO: Validation Results - Epoch: 3
+2026-01-05 02:04:34,942 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 02:04:34,974 IRRA.train INFO: Epoch 4: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 02:11:23,674 IRRA.train INFO: Epoch[4] Iteration[100/533], Base Lr: 5.12e-06
+2026-01-05 02:18:15,460 IRRA.train INFO: Epoch[4] Iteration[200/533], Base Lr: 5.12e-06
+2026-01-05 02:24:59,604 IRRA.train INFO: Epoch[4] Iteration[300/533], Base Lr: 5.12e-06
+2026-01-05 02:32:14,815 IRRA.train INFO: Epoch[4] Iteration[400/533], Base Lr: 5.12e-06
+2026-01-05 02:38:58,775 IRRA.train INFO: Epoch[4] Iteration[500/533], Base Lr: 5.12e-06
+2026-01-05 02:41:09,802 IRRA.train INFO: Epoch 4 done. Time per batch: 4.118[s] Speed: 31.1[samples/s]
+2026-01-05 02:41:09,805 IRRA.train INFO: Validation Results - Epoch: 4
+2026-01-05 02:41:44,854 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 02:41:44,875 IRRA.train INFO: Epoch 5: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 02:48:32,952 IRRA.train INFO: Epoch[5] Iteration[100/533], Base Lr: 6.56e-06
+2026-01-05 02:55:16,985 IRRA.train INFO: Epoch[5] Iteration[200/533], Base Lr: 6.56e-06
+2026-01-05 03:02:02,513 IRRA.train INFO: Epoch[5] Iteration[300/533], Base Lr: 6.56e-06
+2026-01-05 03:08:47,742 IRRA.train INFO: Epoch[5] Iteration[400/533], Base Lr: 6.56e-06
+2026-01-05 03:15:40,794 IRRA.train INFO: Epoch[5] Iteration[500/533], Base Lr: 6.56e-06
+2026-01-05 03:17:51,559 IRRA.train INFO: Epoch 5 done. Time per batch: 4.065[s] Speed: 31.5[samples/s]
+2026-01-05 03:17:51,559 IRRA.train INFO: Validation Results - Epoch: 5
+2026-01-05 03:18:24,993 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 03:18:25,012 IRRA.train INFO: Epoch 6: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 03:25:41,105 IRRA.train INFO: Epoch[6] Iteration[100/533], Base Lr: 8.00e-06
+2026-01-05 03:32:43,654 IRRA.train INFO: Epoch[6] Iteration[200/533], Base Lr: 8.00e-06
+2026-01-05 03:39:54,526 IRRA.train INFO: Epoch[6] Iteration[300/533], Base Lr: 8.00e-06
+2026-01-05 03:46:56,669 IRRA.train INFO: Epoch[6] Iteration[400/533], Base Lr: 8.00e-06
+2026-01-05 03:53:59,362 IRRA.train INFO: Epoch[6] Iteration[500/533], Base Lr: 8.00e-06
+2026-01-05 03:56:15,795 IRRA.train INFO: Epoch 6 done. Time per batch: 4.260[s] Speed: 30.0[samples/s]
+2026-01-05 03:56:15,795 IRRA.train INFO: Validation Results - Epoch: 6
+2026-01-05 03:56:45,104 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 03:56:45,113 IRRA.train INFO: Epoch 7: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 04:03:50,904 IRRA.train INFO: Epoch[7] Iteration[100/533], Base Lr: 8.00e-06
+2026-01-05 04:10:53,150 IRRA.train INFO: Epoch[7] Iteration[200/533], Base Lr: 8.00e-06
+2026-01-05 04:17:55,783 IRRA.train INFO: Epoch[7] Iteration[300/533], Base Lr: 8.00e-06
+2026-01-05 04:24:57,924 IRRA.train INFO: Epoch[7] Iteration[400/533], Base Lr: 8.00e-06
+2026-01-05 04:32:06,346 IRRA.train INFO: Epoch[7] Iteration[500/533], Base Lr: 8.00e-06
+2026-01-05 04:34:22,561 IRRA.train INFO: Epoch 7 done. Time per batch: 4.235[s] Speed: 30.2[samples/s]
+2026-01-05 04:34:22,561 IRRA.train INFO: Validation Results - Epoch: 7
+2026-01-05 04:34:52,595 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 04:34:52,612 IRRA.train INFO: Epoch 8: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 04:42:12,880 IRRA.train INFO: Epoch[8] Iteration[100/533], Base Lr: 7.98e-06
+2026-01-05 04:49:14,998 IRRA.train INFO: Epoch[8] Iteration[200/533], Base Lr: 7.98e-06
+2026-01-05 04:56:18,569 IRRA.train INFO: Epoch[8] Iteration[300/533], Base Lr: 7.98e-06
+2026-01-05 05:03:20,792 IRRA.train INFO: Epoch[8] Iteration[400/533], Base Lr: 7.98e-06
+2026-01-05 05:10:22,857 IRRA.train INFO: Epoch[8] Iteration[500/533], Base Lr: 7.98e-06
+2026-01-05 05:12:39,755 IRRA.train INFO: Epoch 8 done. Time per batch: 4.254[s] Speed: 30.1[samples/s]
+2026-01-05 05:12:39,755 IRRA.train INFO: Validation Results - Epoch: 8
+2026-01-05 05:13:09,739 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 05:13:09,759 IRRA.train INFO: Epoch 9: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 05:20:16,577 IRRA.train INFO: Epoch[9] Iteration[100/533], Base Lr: 7.96e-06
+2026-01-05 05:27:26,019 IRRA.train INFO: Epoch[9] Iteration[200/533], Base Lr: 7.96e-06
+2026-01-05 05:34:44,365 IRRA.train INFO: Epoch[9] Iteration[300/533], Base Lr: 7.96e-06
+2026-01-05 05:41:46,742 IRRA.train INFO: Epoch[9] Iteration[400/533], Base Lr: 7.96e-06
+2026-01-05 05:48:49,138 IRRA.train INFO: Epoch[9] Iteration[500/533], Base Lr: 7.96e-06
+2026-01-05 05:51:05,356 IRRA.train INFO: Epoch 9 done. Time per batch: 4.269[s] Speed: 30.0[samples/s]
+2026-01-05 05:51:05,357 IRRA.train INFO: Validation Results - Epoch: 9
+2026-01-05 05:51:35,306 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 05:51:35,323 IRRA.train INFO: Epoch 10: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 05:58:41,183 IRRA.train INFO: Epoch[10] Iteration[100/533], Base Lr: 7.93e-06
+2026-01-05 06:05:43,190 IRRA.train INFO: Epoch[10] Iteration[200/533], Base Lr: 7.93e-06
+2026-01-05 06:12:45,173 IRRA.train INFO: Epoch[10] Iteration[300/533], Base Lr: 7.93e-06
+2026-01-05 06:19:47,257 IRRA.train INFO: Epoch[10] Iteration[400/533], Base Lr: 7.93e-06
+2026-01-05 06:26:49,480 IRRA.train INFO: Epoch[10] Iteration[500/533], Base Lr: 7.93e-06
+2026-01-05 06:29:05,947 IRRA.train INFO: Epoch 10 done. Time per batch: 4.223[s] Speed: 30.3[samples/s]
+2026-01-05 06:29:05,947 IRRA.train INFO: Validation Results - Epoch: 10
+2026-01-05 06:29:35,416 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 06:29:35,431 IRRA.train INFO: Epoch 11: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 06:36:43,301 IRRA.train INFO: Epoch[11] Iteration[100/533], Base Lr: 7.88e-06
+2026-01-05 06:43:55,724 IRRA.train INFO: Epoch[11] Iteration[200/533], Base Lr: 7.88e-06
+2026-01-05 06:50:57,815 IRRA.train INFO: Epoch[11] Iteration[300/533], Base Lr: 7.88e-06
+2026-01-05 06:58:00,327 IRRA.train INFO: Epoch[11] Iteration[400/533], Base Lr: 7.88e-06
+2026-01-05 07:05:02,418 IRRA.train INFO: Epoch[11] Iteration[500/533], Base Lr: 7.88e-06
+2026-01-05 07:07:18,625 IRRA.train INFO: Epoch 11 done. Time per batch: 4.246[s] Speed: 30.1[samples/s]
+2026-01-05 07:07:18,625 IRRA.train INFO: Validation Results - Epoch: 11
+2026-01-05 07:07:48,063 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 07:07:48,081 IRRA.train INFO: Epoch 12: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 07:14:53,213 IRRA.train INFO: Epoch[12] Iteration[100/533], Base Lr: 7.83e-06
+2026-01-05 07:21:56,276 IRRA.train INFO: Epoch[12] Iteration[200/533], Base Lr: 7.83e-06
+2026-01-05 07:28:58,438 IRRA.train INFO: Epoch[12] Iteration[300/533], Base Lr: 7.83e-06
+2026-01-05 07:36:01,478 IRRA.train INFO: Epoch[12] Iteration[400/533], Base Lr: 7.83e-06
+2026-01-05 07:43:08,682 IRRA.train INFO: Epoch[12] Iteration[500/533], Base Lr: 7.83e-06
+2026-01-05 07:45:30,196 IRRA.train INFO: Epoch 12 done. Time per batch: 4.244[s] Speed: 30.2[samples/s]
+2026-01-05 07:45:30,197 IRRA.train INFO: Validation Results - Epoch: 12
+2026-01-05 07:46:00,680 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 07:46:00,697 IRRA.train INFO: Epoch 13: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 07:53:07,025 IRRA.train INFO: Epoch[13] Iteration[100/533], Base Lr: 7.77e-06
+2026-01-05 08:00:09,071 IRRA.train INFO: Epoch[13] Iteration[200/533], Base Lr: 7.77e-06
+2026-01-05 08:07:11,253 IRRA.train INFO: Epoch[13] Iteration[300/533], Base Lr: 7.77e-06
+2026-01-05 08:14:13,616 IRRA.train INFO: Epoch[13] Iteration[400/533], Base Lr: 7.77e-06
+2026-01-05 08:21:15,833 IRRA.train INFO: Epoch[13] Iteration[500/533], Base Lr: 7.77e-06
+2026-01-05 08:23:32,491 IRRA.train INFO: Epoch 13 done. Time per batch: 4.225[s] Speed: 30.3[samples/s]
+2026-01-05 08:23:32,493 IRRA.train INFO: Validation Results - Epoch: 13
+2026-01-05 08:24:02,770 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.195 | 0.325 | 0.578 | 0.822 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 08:24:02,783 IRRA.train INFO: Epoch 14: Vision Tower is UNFROZEN (0/437 params affected).
