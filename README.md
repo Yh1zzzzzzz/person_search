@@ -7,7 +7,7 @@ python train.py \
   --loss_names 'sdm+id' \
   --gen_loss_weight 0 \
   --bnneck \
-  --batch_size 128 \
+  --batch_size 64 \
   --num_workers 10 \
   --t5_image_size 448 \
   --attn_implementation sdpa \
@@ -15,8 +15,8 @@ python train.py \
   --gradient_checkpointing \
   --lr 8e-6 \
   --projector_lr 2e-5 \
-  --projector_hidden_dim 2048 \
-  --classifier_lr 2e-5 \
+  --projector_hidden_dim 1024 \
+  --classifier_lr 2-5 \
   --num_epoch 60
 
 ## Usage
@@ -67,7 +67,15 @@ python train.py \
 --root_dir 'training_data' \
 --num_epoch 60
 ```
-
+python train.py \
+--name iira \
+--img_aug \
+--batch_size 64 \
+--MLM \
+--loss_names 'sdm+id' \
+--dataset_name 'CUHK-PEDES' \
+--root_dir 'training_data' \
+--num_epoch 60
 ## Testing
 python quick_check_t5gemma2.py --dataset_name CUHK-PEDES --root_dir training_data --hf_model_name_or_path T5_270M_Base
 

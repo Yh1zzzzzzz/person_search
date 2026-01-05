@@ -17,7 +17,7 @@ messages = [
         "role": "user",
         "content": [
             {"type": "image", "image": img},
-            {"type": "text", "text": "Provide a detailed description of the person’s clothing and appearance in the image."},
+            {"type": "text", "text": "Person Caption:"},
         ]
     },
 ]

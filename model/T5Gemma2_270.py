@@ -3,7 +3,10 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import Dict, Optional
 from transformers import AutoModelForSeq2SeqLM, PreTrainedModel
+"""
+图片通过enencoder的T5-Gemma2模型
 
+"""
 # =============================================================================
 # Loss Functions
 # =============================================================================
@@ -364,8 +367,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
     def forward(self, batch: Dict[str, torch.Tensor]) -> Dict[str, torch.Tensor]:
         ret = {}
 
-        # Keep logging interface consistent with the IRRA baseline.
-        # logit_scale is the inverse temperature in this repo.
         ret["temperature"] = (1.0 / self.logit_scale).detach()
         
         reuse_mm_encoder_for_image = bool(batch.get("reuse_mm_encoder_for_image", False))
