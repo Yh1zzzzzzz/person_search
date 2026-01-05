@@ -17,8 +17,7 @@ python train.py \
   --projector_lr 2e-5 \
   --projector_hidden_dim 2048 \
   --classifier_lr 2e-5 \
-  --num_epoch 70
-
+  --num_epoch 60
 
 ## Usage
 ### Requirements
