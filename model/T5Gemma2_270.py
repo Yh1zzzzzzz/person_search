@@ -14,9 +14,9 @@ class Objectives:
     @staticmethod
     def compute_sdm(image_features, text_features, pid, logit_scale, epsilon=1e-8):
         # 1. 特征归一化 (L2 Normalize)
-        # 保持数值稳定性，这是计算余弦相似度的前提
-        image_features = F.normalize(image_features, dim=1)
-        text_features = F.normalize(text_features, dim=1)
+        # 传入前已经归一化，无需重复归一化
+        # image_features = F.normalize(image_features, dim=1)
+        # text_features = F.normalize(text_features, dim=1)
 
    
         logits = logit_scale * image_features @ text_features.t()
@@ -72,7 +72,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         config,
         hf_model_name_or_path: str,
         num_classes: int = 11003,
-        feature_dim: int = 1024,
+        feature_dim: int = 640,
         projector_hidden_dim: int = 2048,
         bnneck: bool = False,
         temperature: float = 0.02,
@@ -81,7 +81,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         image_size: int = 448,
         attn_implementation: str = "sdpa",
     ):
-        
+         
         super().__init__(config)
         self.num_classes = num_classes #CUHK-PEDES默认11003个id(训练集)
         self.feature_dim = feature_dim
@@ -166,20 +166,40 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         
         print(f">>> Model Configured: Hidden={self.hidden_size} | Default Image Tokens={self.num_image_tokens}")
 
+
         # 视觉投影
-        self.vision_proj = nn.Linear(self.hidden_size, feature_dim, bias=False)
+        vision_hidden = 1152  # SigLIP vision hidden size
+        self.vision_proj = nn.Sequential(
+            nn.Linear(vision_hidden, vision_hidden),
+            nn.LayerNorm(vision_hidden),
+            nn.GELU(approximate='tanh'),
+            nn.Dropout(p=0.1),
+            nn.Linear(vision_hidden, feature_dim),
+        )
+        nn.init.xavier_uniform_(self.vision_proj[0].weight)
+        nn.init.xavier_uniform_(self.vision_proj[4].weight)
+        nn.init.constant_(self.vision_proj[0].bias, 0)
+        nn.init.constant_(self.vision_proj[4].bias, 0)
+        nn.init.constant_(self.vision_proj[1].bias, 0)
+        nn.init.constant_(self.vision_proj[1].weight, 1.0)
+
 
         #文本投影头
-        hidden_dim = int(projector_hidden_dim)
-        if hidden_dim <= 0:
-            raise ValueError(f"projector_hidden_dim must be positive, got {hidden_dim}")
+        self.text_proj = nn.Sequential(
+            nn.Linear(self.hidden_size, self.hidden_size),
+            nn.LayerNorm(self.hidden_size),
+            nn.GELU(approximate='tanh'),
+            nn.Dropout(p=0.1),
+            nn.Linear(self.hidden_size, feature_dim),
+        )
+        nn.init.xavier_uniform_(self.text_proj[0].weight)
+        nn.init.xavier_uniform_(self.text_proj[4].weight)
+        nn.init.constant_(self.text_proj[0].bias, 0)
+        nn.init.constant_(self.text_proj[4].bias, 0)
+        nn.init.constant_(self.text_proj[1].bias, 0)
+        nn.init.constant_(self.text_proj[1].weight, 1.0)
 
-        # self.text_proj = nn.Sequential(
-        #     nn.Linear(self.hidden_size, hidden_dim, bias=False),
-        #     nn.GELU(),
-        #     nn.Linear(hidden_dim, feature_dim, bias=False),
-        # )
-        self.text_proj = nn.Linear(self.hidden_size, feature_dim, bias=False)
+
         self.logit_scale = nn.Parameter(torch.ones([]) * (1.0 / temperature))
         self.classifier = nn.Linear(feature_dim, num_classes, bias=False)
 
@@ -193,8 +213,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             nn.init.constant_(self.bn_t.weight, 1.0)
             nn.init.constant_(self.bn_t.bias, 0.0)
 
-        nn.init.xavier_uniform_(self.vision_proj.weight)
-        nn.init.xavier_uniform_(self.text_proj.weight)
         nn.init.xavier_uniform_(self.classifier.weight)
 
     def _adapt_vision_and_projector_for_image_size(self, image_size: int) -> None:
@@ -354,7 +372,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         enc_out = self.encoder(input_ids=input_ids, attention_mask=mask)
         # Mean-pool encoder states as the global text feature
         pooled = self._mean_pool(enc_out.last_hidden_state, mask)
-        pooled = pooled.to(dtype=self.text_proj.weight.dtype)
+        pooled = pooled.to(dtype=self.text_proj[0].weight.dtype)
         return self.text_proj(pooled)
 
     # Compatibility with this repo's Evaluator API

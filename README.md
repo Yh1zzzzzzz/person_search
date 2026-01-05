@@ -8,15 +8,14 @@ python train.py \
   --gen_loss_weight 0 \
   --bnneck \
   --batch_size 64 \
-  --num_workers 10 \
+  --num_workers 12 \
   --t5_image_size 448 \
   --attn_implementation sdpa \
   --amp --amp_dtype bf16 \
   --gradient_checkpointing \
-  --lr 8e-6 \
-  --projector_lr 2e-5 \
-  --projector_hidden_dim 1024 \
-  --classifier_lr 2-5 \
+  --lr 1e-6 \
+  --projector_lr 1e-5 \
+  --classifier_lr 1e-5 \
   --num_epoch 60
 
 ## Usage

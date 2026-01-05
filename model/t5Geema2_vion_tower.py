@@ -14,7 +14,7 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
         config,
         hf_model_name_or_path: str,
         num_classes: int = 11003,
-        feature_dim: int = 512,
+        feature_dim: int = 640,
         projector_hidden_dim: int = 1024,
         temperature: float = 0.02,
         gen_loss_weight: float = 1.0,
@@ -26,7 +26,7 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
             config=config,
             hf_model_name_or_path=hf_model_name_or_path,
             num_classes=num_classes,
-            feature_dim=feature_dim,
+            feature_dim=int(feature_dim),
             temperature=temperature,
             gen_loss_weight=gen_loss_weight,
             id_loss_weight=id_loss_weight,
@@ -53,17 +53,22 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
             raise ValueError(f"projector_hidden_dim must be positive, got {hidden_dim}")
 
         # Projector Linear: Linear(input_dim, feature_dim)
-        self.vision_tower_align = nn.Linear(vision_hidden, int(feature_dim), bias=False)
-        nn.init.xavier_uniform_(self.vision_tower_align.weight)
+        self.vision_tower_align = nn.Sequential(
+            nn.Linear(vision_hidden, vision_hidden),
+            nn.LayerNorm(vision_hidden),
+            nn.GELU(approximate='tanh'),
+            nn.Dropout(p=0.1),
+            nn.Linear(vision_hidden, feature_dim),
+        )
+
+        nn.init.xavier_uniform_(self.vision_tower_align[0].weight)
+        nn.init.xavier_uniform_(self.vision_tower_align[4].weight)
+        nn.init.constant_(self.vision_tower_align[0].bias, 0)
+        nn.init.constant_(self.vision_tower_align[4].bias, 0)
+        nn.init.constant_(self.vision_tower_align[1].bias, 0)
+        nn.init.constant_(self.vision_tower_align[1].weight, 1.0)
+
         
-        # Re-initialize text_proj and classifier to ensure they are not using parent's random init
-        # if we want to be explicit, but parent init is fine.
-        # However, we MUST ensure they are registered as parameters of this module.
-        # Since they are initialized in super().__init__, they are already registered.
-        
-        # CRITICAL FIX:
-        # The parent class initializes self.vision_proj, but this subclass uses self.vision_tower_align.
-        # We should probably delete self.vision_proj to avoid confusion and unused parameters.
         if hasattr(self, "vision_proj"):
             del self.vision_proj
 
@@ -80,7 +85,7 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
         # Mean-pool over patch tokens
         pooled = last_hidden.mean(dim=1)
 
-        pooled = pooled.to(dtype=self.vision_tower_align.weight.dtype)
+        pooled = pooled.to(dtype=self.vision_tower_align[0].weight.dtype)
         return self.vision_tower_align(pooled)
 
 
@@ -102,7 +107,7 @@ def build_person_search_t5gemma2_vion_tower(args, num_classes: int):
         config=config,
         hf_model_name_or_path=hf_path,
         num_classes=int(num_classes),
-        feature_dim=int(getattr(args, "feature_dim", 1024)),
+        feature_dim=int(getattr(args, "feature_dim", 640)),
         projector_hidden_dim=int(getattr(args, "projector_hidden_dim", 2048)),
         temperature=float(getattr(args, "temperature", 0.02)),
         gen_loss_weight=float(getattr(args, "gen_loss_weight", 1.0)),
