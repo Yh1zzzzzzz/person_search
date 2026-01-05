@@ -55,6 +55,17 @@ class PersonSearchT5Gemma2VisionTower(PersonSearchT5Gemma2):
         # Projector Linear: Linear(input_dim, feature_dim)
         self.vision_tower_align = nn.Linear(vision_hidden, int(feature_dim), bias=False)
         nn.init.xavier_uniform_(self.vision_tower_align.weight)
+        
+        # Re-initialize text_proj and classifier to ensure they are not using parent's random init
+        # if we want to be explicit, but parent init is fine.
+        # However, we MUST ensure they are registered as parameters of this module.
+        # Since they are initialized in super().__init__, they are already registered.
+        
+        # CRITICAL FIX:
+        # The parent class initializes self.vision_proj, but this subclass uses self.vision_tower_align.
+        # We should probably delete self.vision_proj to avoid confusion and unused parameters.
+        if hasattr(self, "vision_proj"):
+            del self.vision_proj
 
     def encode_image_only(self, pixel_values: torch.Tensor) -> torch.Tensor:
         self._validate_pixel_values_shape(pixel_values)
