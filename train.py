@@ -59,6 +59,17 @@ if __name__ == '__main__':
     logger.info('Total params: %2.fM' % (sum(p.numel() for p in model.parameters()) / 1000000.0))
     model.to(device)
 
+    # [Safety] Ensure Vision Tower is unfrozen before building optimizer.
+    # If it were frozen here, build_optimizer would skip it, and subsequent unfreezing in do_train would fail to update weights.
+    _vision_tower = None
+    if hasattr(model, "encoder") and hasattr(model.encoder, "vision_tower"):
+        _vision_tower = model.encoder.vision_tower
+    
+    if _vision_tower is not None:
+        logger.info("Safety check: Forcing Vision Tower requires_grad=True before optimizer build.")
+        for p in _vision_tower.parameters():
+            p.requires_grad = True
+
     if args.distributed:
         model = torch.nn.parallel.DistributedDataParallel(
             model,

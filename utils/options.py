@@ -39,7 +39,7 @@ def get_args():
     ######################## loss settings ########################
     parser.add_argument("--loss_names", default='sdm+id+mlm', help="which loss to use ['mlm', 'cmpm', 'id', 'itc', 'sdm']")
     parser.add_argument("--mlm_loss_weight", type=float, default=1.0, help="mlm loss weight")
-    parser.add_argument("--id_loss_weight", type=float, default=1.0, help="id loss weight")
+    parser.add_argument("--id_loss_weight", type=float, default=0.5, help="id loss weight")
     parser.add_argument(
         "--bnneck",
         default=False,
@@ -74,22 +74,22 @@ def get_args():
 
     ######################## solver ########################
     parser.add_argument("--optimizer", type=str, default="Adam", help="[SGD, Adam, Adamw]")
-    parser.add_argument("--lr", type=float, default=1e-5)
+    parser.add_argument("--lr", type=float, default=8e-6)
     parser.add_argument(
         "--projector_lr",
         type=float,
-        default=1e-3,
+        default=2e-5,
         help="Learning rate for vision-tower projector (e.g., vision_tower_align).",
     )
     parser.add_argument(
         "--classifier_lr",
         type=float,
-        default=1e-4,
+        default=2e-5,
         help="Learning rate for ID classifier (and BNNeck affine params when enabled).",
     )
     parser.add_argument("--bias_lr_factor", type=float, default=2.)
     parser.add_argument("--momentum", type=float, default=0.9)
-    parser.add_argument("--weight_decay", type=float, default=4e-5)
+    parser.add_argument("--weight_decay", type=float, default=1e-4)
     parser.add_argument("--weight_decay_bias", type=float, default=0.)
     parser.add_argument("--alpha", type=float, default=0.9)
     parser.add_argument("--beta", type=float, default=0.999)

@@ -79,6 +79,14 @@ def build_person_search_t5gemma2_vion_tower(args, num_classes: int):
     hf_path = getattr(args, "hf_model_name_or_path", "T5_270M_Base")
     config = AutoConfig.from_pretrained(hf_path, local_files_only=True)
     # config._attn_implementation = "sdpa"
+
+    # Set drop_path_rate for vision tower, text encoder and decoder
+    config.drop_path_rate = 0.1
+    if hasattr(config, "vision_config"):
+        config.vision_config.drop_path_rate = 0.1
+    if hasattr(config, "text_config"):
+        config.text_config.drop_path_rate = 0.1
+
     model = PersonSearchT5Gemma2VisionTower(
         config=config,
         hf_model_name_or_path=hf_path,
