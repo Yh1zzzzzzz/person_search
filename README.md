@@ -7,18 +7,17 @@ python train.py \
   --loss_names 'sdm+id' \
   --gen_loss_weight 0 \
   --bnneck \
-  --batch_size 128 \
+  --batch_size 64 \
   --num_workers 10 \
   --t5_image_size 448 \
   --attn_implementation sdpa \
   --amp --amp_dtype bf16 \
   --gradient_checkpointing \
-  --lr 1e-5 \
-  --projector_lr 1e-3 \
-  --projector_hidden_dim 2048 \
-  --classifier_lr 1e-4 \
+  --lr 8e-6 \
+  --projector_lr 2e-5 \
+  --projector_hidden_dim 1024 \
+  --classifier_lr 1e-5 \
   --num_epoch 60
-
 
 ## Usage
 ### Requirements
