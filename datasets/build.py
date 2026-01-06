@@ -20,129 +20,32 @@ from .rstpreid import RSTPReid
 __factory = {'CUHK-PEDES': CUHKPEDES, 'ICFG-PEDES': ICFGPEDES, 'RSTPReid': RSTPReid}
 
 
-class SiglipLetterboxAugment(object):
-    """
-    针对 SigLIP 优化的预处理管道：
-    1. 保持长宽比缩放 (Bicubic)
-    2. [训练时] 在纯净的图片上做几何/光度增强 (Flip, Color, Blur)
-    3. 居中填充灰色背景 (Padding)
-    """
-    def __init__(self, target_size, fill_value=128, is_train=True, aug=False):
-        # 能够处理 int 或 tuple
-        self.target_size = (target_size, target_size) if isinstance(target_size, int) else target_size
-        self.fill_value = fill_value
-        self.is_train = is_train
-        self.aug = aug
-        
-        # 定义增强参数
-        # 1. 颜色抖动：SigLIP 对色彩敏感，Person Search 依赖颜色描述，所以 Hue 设为 0
-        self.color_jitter = T.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0)
-        
-    def __call__(self, img):
-        # -----------------------------------------------------------
-        # Step 1: Resize (保持长宽比，使用 Bicubic)
-        # -----------------------------------------------------------
-        w, h = img.size
-        target_h, target_w = self.target_size
-        
-        scale = min(target_w / w, target_h / h)
-        new_w = int(round(w * scale))
-        new_h = int(round(h * scale))
-        
-        # SigLIP 官方通常偏好 BICUBIC 插值
-        img = img.resize((new_w, new_h), Image.BICUBIC)
-        
-        # -----------------------------------------------------------
-        # Step 2: Augmentation (在 Resize 后，Padding 前)
-        # -----------------------------------------------------------
-        if self.is_train and self.aug:
-            # A. 随机水平翻转 (Random Horizontal Flip)
-            if random.random() < 0.5:
-                img = F.hflip(img)
-            
-            # B. 颜色抖动 (Color Jitter) - 只在有效行人区域做
-            if random.random() < 0.5:
-                img = self.color_jitter(img)
-            
-            # C. 高斯模糊 (Gaussian Blur)
-            # 448分辨率很高，模糊可以模拟低清摄像头，增强鲁棒性
-            if random.random() < 0.1:
-                img = F.gaussian_blur(img, kernel_size=5)
 
-        # -----------------------------------------------------------
-        # Step 3: Padding (居中补灰)
-        # -----------------------------------------------------------
-        # 创建画布，填充 fill_value (通常是 128)
-        canvas = Image.new('RGB', (target_w, target_h), (self.fill_value, self.fill_value, self.fill_value))
-        
-        # 计算居中位置
-        pad_left = (target_w - new_w) // 2
-        pad_top = (target_h - new_h) // 2
-        
-        # 粘贴
-        canvas.paste(img, (pad_left, pad_top))
-        
-        return canvas
-
-def bulid_transforms_for_T5Gemma2(img_size=(448, 448), is_train=True, aug=False):
-    """
-    为使用 SigLIP 作为 Vision Tower 的 T5Gemma2 构建 Transform。
-    特点：
-    1. 输入尺寸 448x448
-    2. 均值方差均为 0.5 (SigLIP 标准)
-    3. 采用 Resize -> Augment -> Pad 流程
-    """
+def bulid_transforms_for_T5Gemma2(img_size=(896, 896), is_train=True, aug=False):
     
-    # --- 关键修改：SigLIP 的标准归一化参数 ---
-    # 大多数 SigLIP 模型 (如 google/siglip-so400m) 训练时 rescale_factor=1/255 
-    # 并且使用 mean=[0.5, 0.5, 0.5], std=[0.5, 0.5, 0.5]
-    # 这相当于将像素值缩放到 [-1, 1] 区间
-    mean = [0.5, 0.5, 0.5]
-    std = [0.5, 0.5, 0.5]
-    
-    # 填充颜色：归一化前的 0.5 对应像素值 128
-    fill_value = 128
+    # img_size is kept for API compatibility; final resizing is done by processor.
+    _ = img_size
 
     if not is_train:
-        # 验证/推理阶段：无增强，仅 Resize + Pad
-        transform = T.Compose([
-            SiglipLetterboxAugment(target_size=img_size, fill_value=fill_value, is_train=False, aug=False),
+        # 验证/推理阶段：不做增强
+        return T.Compose([
             T.ToTensor(),
-            T.Normalize(mean=mean, std=std),
         ])
-        return transform
 
-    # 训练阶段
     if aug:
-        # 强增强模式
-        transform = T.Compose([
-            # 1. 自定义管道：Resize -> Augment(Flip/Color/Blur) -> Pad
-            SiglipLetterboxAugment(target_size=img_size, fill_value=fill_value, is_train=True, aug=True),
-            
-            # 2. 转 Tensor
-            T.ToTensor(),
-            
-            # 3. 归一化 (到 -1 ~ 1)
-            T.Normalize(mean=mean, std=std),
-            
-            # 4. 随机擦除 (Random Erasing) - 放在最后!
-            # 对于 448x448，scale 设为 (0.02, 0.15) 比较合适 (也就是 126像素到 340像素的遮挡块)
-            # value='random' 或 value=0 (因为归一化后灰色背景是0) 都可以，推荐 'random' 增加鲁棒性
-            T.RandomErasing(p=0.5, scale=(0.02, 0.15), value='random'), 
-        ])
-    else:
-        # 弱增强模式 (通常只开翻转)
-        transform = T.Compose([
-            # 这里的 aug=True 开启了 SiglipLetterboxAugment 里的基础增强逻辑，
-            # 你可以在 SiglipLetterboxAugment 内部再细分，或者像下面这样简化：
-            # 这里为了简单，假设 aug=False 时只做 Resize+Pad (类似 Baseline)，或者你可以手动加 Flip
-            SiglipLetterboxAugment(target_size=img_size, fill_value=fill_value, is_train=True, aug=False),
-            T.RandomHorizontalFlip(0.5), # 如果 SiglipLetterboxAugment 没开增强，在这里补一个翻转
-            T.ToTensor(),
-            T.Normalize(mean=mean, std=std),
+        return T.Compose([
+            T.RandomHorizontalFlip(0.5),
+            T.RandomApply([T.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0)], p=0.5),
+            T.RandomApply([T.GaussianBlur(kernel_size=5)], p=0.1),
+            T.ToTensor()
         ])
         
-    return transform
+
+    # 弱增强：仅翻转
+    return T.Compose([
+        T.RandomHorizontalFlip(0.5),
+        T.ToTensor()
+    ])
 
 def build_transforms(img_size=(384, 128), aug=False, is_train=True):
     """
@@ -239,17 +142,18 @@ def build_dataloader(args, tranforms=None):
     if is_t5:
         from transformers import AutoProcessor
 
-        processor = AutoProcessor.from_pretrained(getattr(args, "hf_model_name_or_path", "T5_270M_Base"))
+        hf_use_fast = getattr(args, "hf_use_fast", True)
+        processor = AutoProcessor.from_pretrained(
+                getattr(args, "hf_model_name_or_path", "T5_270M_Base"),
+                use_fast=bool(hf_use_fast),
+            )
+
+    
     if args.training:
         if is_t5:
-            t5_img_size = int(getattr(args, "t5_image_size", 448))
-            train_transforms = bulid_transforms_for_T5Gemma2(img_size=(t5_img_size, t5_img_size),
-                                                          is_train=True,
-                                                          aug=args.img_aug)
+            train_transforms = bulid_transforms_for_T5Gemma2(is_train=True,aug=args.img_aug)
             
-            val_transforms = bulid_transforms_for_T5Gemma2(img_size=(t5_img_size, t5_img_size),
-                                                        is_train=False,
-                                                        aug=False)
+            val_transforms = bulid_transforms_for_T5Gemma2(is_train=True,aug=args.img_aug)
             loss_names = str(getattr(args, "loss_names", ""))
             train_set = ImageTextDatasetT5Gemma2(
                 dataset.train,
@@ -346,7 +250,6 @@ def build_dataloader(args, tranforms=None):
     else:
         # build dataloader for testing
         if is_t5:
-            t5_img_size = int(getattr(args, "t5_image_size", 448))
             test_transforms = bulid_transforms_for_T5Gemma2(img_size=(t5_img_size, t5_img_size), is_train=False, aug=False)
         elif tranforms:
             test_transforms = tranforms

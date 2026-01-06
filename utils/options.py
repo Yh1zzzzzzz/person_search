@@ -27,7 +27,7 @@ def get_args():
     )
     parser.add_argument("--pretrain_choice", default='ViT-B/16') # whether use pretrained model
     parser.add_argument("--temperature", type=float, default=0.02, help="initial temperature value, if 0, don't use temperature")
-    parser.add_argument("--img_aug", default=False, action='store_true')
+    parser.add_argument("--img_aug", default=True, action='store_true')
 
     ## cross modal transfomer setting
     parser.add_argument("--cmt_depth", type=int, default=4, help="cross modal transformer self attn layers")
@@ -39,7 +39,7 @@ def get_args():
     ######################## loss settings ########################
     parser.add_argument("--loss_names", default='sdm+id+mlm', help="which loss to use ['mlm', 'cmpm', 'id', 'itc', 'sdm']")
     parser.add_argument("--mlm_loss_weight", type=float, default=1.0, help="mlm loss weight")
-    parser.add_argument("--id_loss_weight", type=float, default=0.5, help="id loss weight")
+    parser.add_argument("--id_loss_weight", type=float, default=1, help="id loss weight")
     parser.add_argument(
         "--bnneck",
         default=False,
@@ -49,14 +49,7 @@ def get_args():
     parser.add_argument("--gen_loss_weight", type=float, default=1.0, help="generation loss weight (t5gemma2)")
     parser.add_argument("--gen_prompt", type=str, default="Caption", help="generation prompt text after <start_of_image>")
     parser.add_argument("--gen_prompt_length", type=int, default=32, help="max length for generation prompt token ids")
-    parser.add_argument("--feature_dim", type=int, default=1024, help="projection dim for retrieval heads (t5gemma2)")
-    parser.add_argument(
-        "--projector_hidden_dim",
-        type=int,
-        default=2048,
-        help="Hidden dim of the vision-tower projector MLP (t5gemma2_vion_tower).",
-    )
-    parser.add_argument("--t5_image_size", type=int, default=448, help="expected square image size for t5gemma2 vision tower")
+    
     
     ######################## vison trainsformer settings ########################
     parser.add_argument("--img_size", type=tuple, default=(384, 128))
@@ -118,7 +111,7 @@ def get_args():
     ######################## training efficiency ########################
     parser.add_argument(
         "--amp",
-        default=False,
+        default=True,
         action="store_true",
         help="Enable PyTorch AMP autocast in training (recommended for t5gemma2).",
     )

@@ -1,0 +1,88 @@
+2026-01-06 23:45:57,857 IRRA INFO: Using 1 GPUs
+2026-01-06 23:45:57,857 IRRA INFO: Namespace(local_rank=0
+ name='t5_vion_align_mlp_bnneck_cls1e4'
+ output_dir='logs/CUHK-PEDES/20260106_234557_t5_vion_align_mlp_bnneck_cls1e4'
+ log_period=100
+ eval_period=1
+ val_dataset='test'
+ resume=False
+ resume_ckpt_file=''
+ backbone='t5gemma2_vion_tower'
+ hf_model_name_or_path='T5_270M_Base'
+ pretrain_choice='ViT-B/16'
+ temperature=0.02
+ img_aug=True
+ cmt_depth=4
+ masked_token_rate=0.8
+ masked_token_unchanged_rate=0.1
+ lr_factor=5.0
+ MLM=False
+ loss_names='sdm+id'
+ mlm_loss_weight=1.0
+ id_loss_weight=1
+ bnneck=True
+ gen_loss_weight=0.0
+ gen_prompt='Caption'
+ gen_prompt_length=32
+ img_size=(384
+ 128)
+ stride_size=16
+ text_length=77
+ vocab_size=49408
+ mm_max_length=512
+ optimizer='Adam'
+ lr=1e-06
+ projector_lr=3e-05
+ classifier_lr=3e-05
+ bias_lr_factor=2.0
+ momentum=0.9
+ weight_decay=0.0001
+ weight_decay_bias=0.0
+ alpha=0.9
+ beta=0.999
+ num_epoch=60
+ milestones=(20
+ 50)
+ gamma=0.1
+ warmup_factor=0.1
+ warmup_epochs=5
+ warmup_method='linear'
+ lrscheduler='cosine'
+ target_lr=0
+ power=0.9
+ dataset_name='CUHK-PEDES'
+ sampler='random'
+ num_instance=4
+ root_dir='training_data'
+ batch_size=32
+ test_batch_size=512
+ num_workers=12
+ training=True
+ amp=True
+ amp_dtype='bf16'
+ grad_accum_steps=1
+ max_grad_norm=0.0
+ gradient_checkpointing=True
+ reuse_mm_encoder_for_image=False
+ tokenizers_parallelism='false'
+ attn_implementation='sdpa'
+ distributed=False)
+2026-01-06 23:45:58,625 IRRA.dataset INFO: => CUHK-PEDES Images and Captions are loaded
+2026-01-06 23:45:58,626 IRRA.dataset INFO: CUHKPEDES Dataset statistics:
+2026-01-06 23:45:58,626 IRRA.dataset INFO: 
++--------+-------+--------+----------+
+| subset |  ids  | images | captions |
++--------+-------+--------+----------+
+| train  | 11003 | 34054  |  68126   |
+|  test  |  1000 |  3074  |   6156   |
+|  val   |  1000 |  3078  |   6158   |
++--------+-------+--------+----------+
+2026-01-06 23:46:06,773 IRRA.dataset INFO: using random sampler
+2026-01-06 23:46:07,730 IRRA INFO: Total params: 810M
+2026-01-06 23:46:08,334 IRRA INFO: Safety check: Forcing Vision Tower requires_grad=True before optimizer build.
+2026-01-06 23:46:08,338 IRRA.train INFO: start training
+2026-01-06 23:46:08,340 IRRA.train INFO: Epoch 1: Vision Tower is FROZEN (437/437 params affected).
+2026-01-06 23:57:53,173 IRRA.train INFO: Epoch[1] Iteration[100/2129], loss: 38.9056, sdm_loss: 29.1459, id_loss: 9.7597, Base Lr: 1.00e-07
+2026-01-07 00:09:30,162 IRRA.train INFO: Epoch[1] Iteration[200/2129], loss: 38.8166, sdm_loss: 29.0767, id_loss: 9.7399, Base Lr: 1.00e-07
+2026-01-07 00:21:08,292 IRRA.train INFO: Epoch[1] Iteration[300/2129], loss: 38.7415, sdm_loss: 29.0384, id_loss: 9.7031, Base Lr: 1.00e-07
+2026-01-07 00:32:47,147 IRRA.train INFO: Epoch[1] Iteration[400/2129], loss: 38.6947, sdm_loss: 29.0167, id_loss: 9.6780, Base Lr: 1.00e-07

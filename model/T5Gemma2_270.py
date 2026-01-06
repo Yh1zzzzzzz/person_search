@@ -3,6 +3,19 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import Dict, Optional
 from transformers import AutoModelForSeq2SeqLM, PreTrainedModel
+
+class GeGLU(nn.Module):
+    def __init__(self, in_features, hidden_features, out_features, dropout=0.1):
+        super().__init__()
+        self.gate_proj = nn.Linear(in_features, hidden_features)
+        self.in_proj = nn.Linear(in_features, hidden_features)
+        self.act = nn.GELU(approximate='tanh')
+        self.dropout = nn.Dropout(dropout)
+        self.out_proj = nn.Linear(hidden_features, out_features)
+
+    def forward(self, x):
+        return self.out_proj(self.dropout(self.act(self.gate_proj(x)) * self.in_proj(x)))
+
 """
 图片通过enencoder的T5-Gemma2模型
 
@@ -78,8 +91,10 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         temperature: float = 0.02,
         gen_loss_weight: float = 1.0, 
         id_loss_weight: float = 1.0,
-        image_size: int = 448,
+        image_size: int = 896,
+        vision_intermidiate_size: int = 4304,
         attn_implementation: str = "sdpa",
+        torch_dtype=None,
     ):
          
         super().__init__(config)
@@ -88,7 +103,7 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         self.gen_loss_weight = gen_loss_weight
         self.id_loss_weight = float(id_loss_weight)
         self.use_bnneck = bool(bnneck)
-
+        self.vision_intermidiate_size = int(vision_intermidiate_size)
         # 1. Load Backbone
         print(f"Loading backbone from: {hf_model_name_or_path} ...")
         self.attn_implementation = str(attn_implementation)
@@ -97,6 +112,8 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             local_files_only=True,
             config=config,
         )
+        if torch_dtype is not None:
+            load_kwargs["torch_dtype"] = torch_dtype
         try:
             self.backbone = AutoModelForSeq2SeqLM.from_pretrained(
                 hf_model_name_or_path,
@@ -105,14 +122,36 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             )
             print(f"[T5Gemma2] attn_implementation={self.attn_implementation}")
         except TypeError:
-            self.backbone = AutoModelForSeq2SeqLM.from_pretrained(
-                hf_model_name_or_path,
-                **load_kwargs,
-            )
+            # Older transformers may not accept the arg at all.
+            # Retry without optional load_kwargs that may not be supported.
+            _load_kwargs = dict(load_kwargs)
+            _load_kwargs.pop("torch_dtype", None)
+            self.backbone = AutoModelForSeq2SeqLM.from_pretrained(hf_model_name_or_path, **_load_kwargs)
             print(
                 f"[T5Gemma2] attn_implementation request '{self.attn_implementation}' was ignored "
                 f"(transformers too old / unsupported). Using default attention implementation."
             )
+        except ValueError as e:
+            # Newer transformers may reject sdpa for some custom architectures.
+            msg = str(e)
+            if "scaled_dot_product_attention" in msg or "attn_implementation=\"eager\"" in msg:
+                print(
+                    f"[T5Gemma2] attn_implementation='{self.attn_implementation}' unsupported; "
+                    "falling back to 'eager'."
+                )
+                self.attn_implementation = "eager"
+                try:
+                    self.backbone = AutoModelForSeq2SeqLM.from_pretrained(
+                        hf_model_name_or_path,
+                        attn_implementation=self.attn_implementation,
+                        **load_kwargs,
+                    )
+                except TypeError:
+                    _load_kwargs = dict(load_kwargs)
+                    _load_kwargs.pop("torch_dtype", None)
+                    self.backbone = AutoModelForSeq2SeqLM.from_pretrained(hf_model_name_or_path, **_load_kwargs)
+            else:
+                raise
         self.encoder = self.backbone.get_encoder()
         self.decoder = self.backbone.get_decoder() 
         self.lm_head = self.backbone.lm_head
@@ -158,46 +197,46 @@ class PersonSearchT5Gemma2(PreTrainedModel):
 
         self.expected_image_size = int(getattr(getattr(self.encoder.vision_tower, "config", None), "image_size", 896))
 
-        # If the caller wants a different fixed resolution (e.g., 448x448), adapt vision+projector.
+        # Enforce a fixed resolution. Image resizing/normalization should be done by the HF processor
+        # before feeding pixel_values to the model.
         image_size = int(image_size)
         if image_size != self.expected_image_size:
-            self._adapt_vision_and_projector_for_image_size(image_size)
-            self.expected_image_size = image_size
+            raise ValueError(
+                f"pixel_values resolution mismatch: model expects image_size={self.expected_image_size} "
+                f"but got configured image_size={image_size}. "
+                "Please set processor.image_processor.size/crop_size to match the model, "
+                "or re-initialize the model with the matching image_size."
+            )
         
         print(f">>> Model Configured: Hidden={self.hidden_size} | Default Image Tokens={self.num_image_tokens}")
 
 
         # 视觉投影
-        vision_hidden = 1152  # SigLIP vision hidden size
-        self.vision_proj = nn.Sequential(
-            nn.Linear(vision_hidden, vision_hidden),
-            nn.LayerNorm(vision_hidden),
-            nn.GELU(approximate='tanh'),
-            nn.Dropout(p=0.1),
-            nn.Linear(vision_hidden, feature_dim),
-        )
-        nn.init.xavier_uniform_(self.vision_proj[0].weight)
-        nn.init.xavier_uniform_(self.vision_proj[4].weight)
-        nn.init.constant_(self.vision_proj[0].bias, 0)
-        nn.init.constant_(self.vision_proj[4].bias, 0)
-        nn.init.constant_(self.vision_proj[1].bias, 0)
-        nn.init.constant_(self.vision_proj[1].weight, 1.0)
+        # NOTE: In this architecture, `encode_image_only()` pools the multimodal encoder
+        # output over [IMG] tokens, whose hidden dim matches the text encoder hidden size
+        # (e.g., 640), not the raw SigLIP vision tower hidden size (e.g., 1152).
+        vision_hidden = int(self.hidden_size)
+        if vision_hidden <= 0:
+            raise ValueError(f"Invalid hidden_size for vision projection: {vision_hidden}")
+        self.vision_proj = GeGLU(vision_hidden, vision_intermidiate_size, feature_dim)
+
+        nn.init.xavier_uniform_(self.vision_proj.gate_proj.weight)
+        nn.init.xavier_uniform_(self.vision_proj.in_proj.weight)
+        nn.init.xavier_uniform_(self.vision_proj.out_proj.weight)
+        nn.init.constant_(self.vision_proj.gate_proj.bias, 0)
+        nn.init.constant_(self.vision_proj.in_proj.bias, 0)
+        nn.init.constant_(self.vision_proj.out_proj.bias, 0)
 
 
         #文本投影头
-        self.text_proj = nn.Sequential(
-            nn.Linear(self.hidden_size, self.hidden_size),
-            nn.LayerNorm(self.hidden_size),
-            nn.GELU(approximate='tanh'),
-            nn.Dropout(p=0.1),
-            nn.Linear(self.hidden_size, feature_dim),
-        )
-        nn.init.xavier_uniform_(self.text_proj[0].weight)
-        nn.init.xavier_uniform_(self.text_proj[4].weight)
-        nn.init.constant_(self.text_proj[0].bias, 0)
-        nn.init.constant_(self.text_proj[4].bias, 0)
-        nn.init.constant_(self.text_proj[1].bias, 0)
-        nn.init.constant_(self.text_proj[1].weight, 1.0)
+        self.text_proj = GeGLU(self.hidden_size, projector_hidden_dim, feature_dim)
+
+        nn.init.xavier_uniform_(self.text_proj.gate_proj.weight)
+        nn.init.xavier_uniform_(self.text_proj.in_proj.weight)
+        nn.init.xavier_uniform_(self.text_proj.out_proj.weight)
+        nn.init.constant_(self.text_proj.gate_proj.bias, 0)
+        nn.init.constant_(self.text_proj.in_proj.bias, 0)
+        nn.init.constant_(self.text_proj.out_proj.bias, 0)
 
 
         self.logit_scale = nn.Parameter(torch.ones([]) * (1.0 / temperature))
@@ -214,69 +253,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             nn.init.constant_(self.bn_t.bias, 0.0)
 
         nn.init.xavier_uniform_(self.classifier.weight)
-
-    def _adapt_vision_and_projector_for_image_size(self, image_size: int) -> None:
-        """Adapt SigLIP positional embeddings + projector pooling to a new square image_size.
-
-        Goal (for 448x448):
-        - Vision patches: (448/14)^2 = 32^2 = 1024
-        - Projector pool: stride=2 -> 32x32 -> 16x16 => 256 image tokens (keeps mm_tokens_per_image unchanged)
-
-        Note: We do NOT rely on `ignore_mismatched_sizes` because it typically skips weights rather than
-        performing the 2D interpolation we want.
-        """
-        image_size = int(image_size)
-        if image_size <= 0:
-            raise ValueError(f"image_size must be positive, got {image_size}")
-
-        vision_tower = self.encoder.vision_tower
-        patch_size = int(getattr(getattr(vision_tower, "config", None), "patch_size", 14))
-        if image_size % patch_size != 0:
-            raise ValueError(f"image_size={image_size} must be divisible by patch_size={patch_size}")
-
-        grid_new = image_size // patch_size
-        if grid_new % 16 != 0:
-            raise ValueError(
-                f"image_size={image_size} -> grid={grid_new} must be divisible by 16 to keep 16x16=256 tokens"
-            )
-
-        # 1) Resize positional embeddings by 2D interpolation (old: 64x64=4096)
-        vision_transformer = vision_tower.vision_model if hasattr(vision_tower, "vision_model") else vision_tower
-        pos_embed_layer = vision_transformer.embeddings.position_embedding
-        old_embeddings = pos_embed_layer.weight
-        embed_dim = int(old_embeddings.shape[1])
-        num_patches_old = int(old_embeddings.shape[0])
-        grid_old = int(num_patches_old ** 0.5)
-        if grid_old * grid_old != num_patches_old:
-            raise ValueError(f"Unexpected pos embedding length={num_patches_old}, cannot form a square grid")
-
-        old_img = old_embeddings.t().view(1, embed_dim, grid_old, grid_old)
-        new_img = F.interpolate(old_img, size=(grid_new, grid_new), mode="bicubic", align_corners=False)
-        new_embeddings = new_img.flatten(2).transpose(1, 2).squeeze(0)
-
-        new_pos_layer = nn.Embedding(grid_new * grid_new, embed_dim)
-        new_pos_layer.weight = nn.Parameter(new_embeddings.to(device=old_embeddings.device, dtype=old_embeddings.dtype))
-        vision_transformer.embeddings.position_embedding = new_pos_layer
-        if hasattr(vision_transformer.embeddings, "position_ids"):
-            new_pos_ids = torch.arange(grid_new * grid_new).expand((1, -1)).to(old_embeddings.device)
-            vision_transformer.embeddings.register_buffer("position_ids", new_pos_ids)
-
-        # 2) Patch projector pooling so that output tokens stay 256 (16x16)
-        pool_stride = grid_new // 16
-        self.encoder.multi_modal_projector.avg_pool = nn.AvgPool2d(kernel_size=pool_stride, stride=pool_stride, padding=0)
-
-        # HF projector reshape relies on this attribute (default 64 for 896x896). Must be updated.
-        if hasattr(self.encoder.multi_modal_projector, "patches_per_image"):
-            self.encoder.multi_modal_projector.patches_per_image = grid_new
-
-        # 3) Update configs so downstream code/processor can see the intended resolution
-        if hasattr(self.backbone.config, "encoder") and hasattr(self.backbone.config.encoder, "vision_config"):
-            self.backbone.config.encoder.vision_config.image_size = image_size
-        if hasattr(self.encoder, "config") and hasattr(self.encoder.config, "vision_config"):
-            self.encoder.config.vision_config.image_size = image_size
-        if hasattr(vision_tower, "config"):
-            vision_tower.config.image_size = image_size
-
     
     def _mean_pool(self, last_hidden_state, attention_mask):
         mask = attention_mask.to(dtype=last_hidden_state.dtype).unsqueeze(-1)
@@ -299,33 +275,6 @@ class PersonSearchT5Gemma2(PreTrainedModel):
             )
         img_tokens = last_hidden_state[:, 1 : 1 + num_image_tokens, :]
         return img_tokens.mean(dim=1)
-
-    def _select_eos_feature(self, last_hidden_state: torch.Tensor, attention_mask: torch.Tensor, input_ids: torch.Tensor) -> torch.Tensor:
-        """Select a single text feature vector.
-
-        Prefer EOS token hidden state when eos_token_id is available and present;
-        otherwise fall back to the last non-padding token.
-        """
-        B, T, _ = last_hidden_state.shape
-
-        # Fallback: last non-pad token index
-        lengths = attention_mask.long().sum(dim=1).clamp(min=1)
-        last_idx = (lengths - 1).clamp(min=0)
-
-        if self.eos_token_id is None:
-            return last_hidden_state[torch.arange(B, device=last_hidden_state.device), last_idx]
-
-        is_eos = (input_ids == int(self.eos_token_id)) & (attention_mask.bool())
-        if not bool(is_eos.any()):
-            return last_hidden_state[torch.arange(B, device=last_hidden_state.device), last_idx]
-
-        # Choose the last EOS position per sample (if multiple, take the last one)
-        positions = torch.arange(T, device=last_hidden_state.device).unsqueeze(0).expand(B, T)
-        eos_pos = (positions * is_eos.long()).amax(dim=1)
-        # If a sample has no EOS, eos_pos will be 0; correct those to last_idx
-        has_eos = is_eos.any(dim=1)
-        eos_pos = torch.where(has_eos, eos_pos, last_idx)
-        return last_hidden_state[torch.arange(B, device=last_hidden_state.device), eos_pos]
 
     def _validate_pixel_values_shape(self, pixel_values: torch.Tensor) -> None:
         if pixel_values is None:
@@ -364,18 +313,16 @@ class PersonSearchT5Gemma2(PreTrainedModel):
         )
         # Only pool the 256 [IMG] tokens (exclude BOI/EOI) as requested
         pooled = self._mean_pool_image_tokens(enc_out.last_hidden_state, num_tokens)
-        pooled = pooled.to(dtype=self.vision_proj.weight.dtype)
+        pooled = pooled.to(dtype=self.vision_proj.gate_proj.weight.dtype)
         return self.vision_proj(pooled)
 
     def encode_text_only(self, input_ids):
         mask = (input_ids != int(self.pad_token_id)).long()
         enc_out = self.encoder(input_ids=input_ids, attention_mask=mask)
-        # Mean-pool encoder states as the global text feature
         pooled = self._mean_pool(enc_out.last_hidden_state, mask)
-        pooled = pooled.to(dtype=self.text_proj[0].weight.dtype)
+        pooled = pooled.to(dtype=self.text_proj.gate_proj.weight.dtype)
         return self.text_proj(pooled)
 
-    # Compatibility with this repo's Evaluator API
     def encode_image(self, image: torch.Tensor) -> torch.Tensor:
         return self.encode_image_only(image)
 
@@ -466,12 +413,11 @@ class PersonSearchT5Gemma2(PreTrainedModel):
 
 def build_person_search_t5gemma2(args, num_classes: int):
     from transformers import AutoConfig
+    import torch
 
     hf_path = getattr(args, "hf_model_name_or_path", "T5_270M_Base")
     config = AutoConfig.from_pretrained(hf_path, local_files_only=True)
-    config._attn_implementation = "sdpa"
 
-    # Set drop_path_rate for vision tower, text encoder and decoder
     config.drop_path_rate = 0.1
     if hasattr(config, "vision_config"):
         config.vision_config.drop_path_rate = 0.1
@@ -482,13 +428,23 @@ def build_person_search_t5gemma2(args, num_classes: int):
         config=config,
         hf_model_name_or_path=hf_path,
         num_classes=int(num_classes),
-        feature_dim=int(getattr(args, "feature_dim", 1024)),
+        feature_dim=int(getattr(args, "feature_dim", 640)),
         projector_hidden_dim=int(getattr(args, "projector_hidden_dim", 2048)),
         bnneck=bool(getattr(args, "bnneck", False)),
         temperature=float(getattr(args, "temperature", 0.02)),
         gen_loss_weight=float(getattr(args, "gen_loss_weight", 1.0)),
         id_loss_weight=float(getattr(args, "id_loss_weight", 1.0)),
-        image_size=int(getattr(args, "t5_image_size", 448)),
+        image_size=int(getattr(args, "t5_image_size", 896)),
+        attn_implementation=str(getattr(args, "attn_implementation", "sdpa")),
+        torch_dtype=(
+            torch.bfloat16
+            if bool(getattr(args, "amp", False)) and str(getattr(args, "amp_dtype", "bf16")).lower() == "bf16"
+            else (
+                torch.float16
+                if bool(getattr(args, "amp", False)) and str(getattr(args, "amp_dtype", "bf16")).lower() == "fp16"
+                else None
+            )
+        ),
     )
 
     # VRAM optimizations
@@ -505,14 +461,11 @@ def build_person_search_t5gemma2(args, num_classes: int):
 # =============================================================================
 if __name__ == "__main__":
     from transformers import AutoConfig
-    from model.verify_model import verify
     local_path = "T5_270M_Base"
     config = AutoConfig.from_pretrained(local_path)
+    print(config)
     model = PersonSearchT5Gemma2(
         config=config,
         hf_model_name_or_path=local_path,
-        num_classes=10, 
-        feature_dim=128
     )
     print("Model initialized successfully.")
-    verify()

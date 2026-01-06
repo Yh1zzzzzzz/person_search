@@ -111,3 +111,550 @@
 2026-01-05 20:18:36,569 IRRA.train INFO: Epoch[2] Iteration[500/1065], loss: 32.7872, sdm_loss: 28.1140, id_loss: 4.6732, Base Lr: 2.80e-07
 2026-01-05 20:22:46,513 IRRA.train INFO: Epoch[2] Iteration[600/1065], loss: 32.7788, sdm_loss: 28.1051, id_loss: 4.6737, Base Lr: 2.80e-07
 2026-01-05 20:26:56,940 IRRA.train INFO: Epoch[2] Iteration[700/1065], loss: 32.7722, sdm_loss: 28.0981, id_loss: 4.6741, Base Lr: 2.80e-07
+2026-01-05 20:31:06,583 IRRA.train INFO: Epoch[2] Iteration[800/1065], loss: 32.7669, sdm_loss: 28.0924, id_loss: 4.6745, Base Lr: 2.80e-07
+2026-01-05 20:35:16,465 IRRA.train INFO: Epoch[2] Iteration[900/1065], loss: 32.7607, sdm_loss: 28.0863, id_loss: 4.6744, Base Lr: 2.80e-07
+2026-01-05 20:39:26,448 IRRA.train INFO: Epoch[2] Iteration[1000/1065], loss: 32.7553, sdm_loss: 28.0808, id_loss: 4.6745, Base Lr: 2.80e-07
+2026-01-05 20:42:07,890 IRRA.train INFO: Epoch 2 done. Time per batch: 2.502[s] Speed: 25.6[samples/s]
+2026-01-05 20:42:07,890 IRRA.train INFO: Validation Results - Epoch: 2
+2026-01-05 20:42:44,696 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.097 | 0.780 | 1.624 | 0.517 | 0.242 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 20:42:44,740 IRRA.train INFO: Epoch 3: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 20:46:56,954 IRRA.train INFO: Epoch[3] Iteration[100/1065], loss: 32.6891, sdm_loss: 28.0162, id_loss: 4.6728, Base Lr: 4.60e-07
+2026-01-05 20:51:06,957 IRRA.train INFO: Epoch[3] Iteration[200/1065], loss: 32.6862, sdm_loss: 28.0135, id_loss: 4.6726, Base Lr: 4.60e-07
+2026-01-05 20:55:16,750 IRRA.train INFO: Epoch[3] Iteration[300/1065], loss: 32.6838, sdm_loss: 28.0110, id_loss: 4.6728, Base Lr: 4.60e-07
+2026-01-05 20:59:26,315 IRRA.train INFO: Epoch[3] Iteration[400/1065], loss: 32.6801, sdm_loss: 28.0072, id_loss: 4.6730, Base Lr: 4.60e-07
+2026-01-05 21:03:36,017 IRRA.train INFO: Epoch[3] Iteration[500/1065], loss: 32.6765, sdm_loss: 28.0027, id_loss: 4.6737, Base Lr: 4.60e-07
+2026-01-05 21:07:45,639 IRRA.train INFO: Epoch[3] Iteration[600/1065], loss: 32.6742, sdm_loss: 27.9999, id_loss: 4.6743, Base Lr: 4.60e-07
+2026-01-05 21:11:55,642 IRRA.train INFO: Epoch[3] Iteration[700/1065], loss: 32.6711, sdm_loss: 27.9968, id_loss: 4.6742, Base Lr: 4.60e-07
+2026-01-05 21:16:05,509 IRRA.train INFO: Epoch[3] Iteration[800/1065], loss: 32.6685, sdm_loss: 27.9943, id_loss: 4.6742, Base Lr: 4.60e-07
+2026-01-05 21:20:15,246 IRRA.train INFO: Epoch[3] Iteration[900/1065], loss: 32.6653, sdm_loss: 27.9912, id_loss: 4.6741, Base Lr: 4.60e-07
+2026-01-05 21:24:25,051 IRRA.train INFO: Epoch[3] Iteration[1000/1065], loss: 32.6630, sdm_loss: 27.9888, id_loss: 4.6741, Base Lr: 4.60e-07
+2026-01-05 21:27:06,099 IRRA.train INFO: Epoch 3 done. Time per batch: 2.499[s] Speed: 25.6[samples/s]
+2026-01-05 21:27:06,099 IRRA.train INFO: Validation Results - Epoch: 3
+2026-01-05 21:27:43,371 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.130 | 1.251 | 2.810 | 0.782 | 0.362 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 21:27:43,416 IRRA.train INFO: Epoch 4: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 21:31:55,721 IRRA.train INFO: Epoch[4] Iteration[100/1065], loss: 32.6265, sdm_loss: 27.9575, id_loss: 4.6690, Base Lr: 6.40e-07
+2026-01-05 21:36:05,299 IRRA.train INFO: Epoch[4] Iteration[200/1065], loss: 32.6262, sdm_loss: 27.9574, id_loss: 4.6688, Base Lr: 6.40e-07
+2026-01-05 21:40:15,464 IRRA.train INFO: Epoch[4] Iteration[300/1065], loss: 32.6246, sdm_loss: 27.9550, id_loss: 4.6696, Base Lr: 6.40e-07
+2026-01-05 21:44:24,966 IRRA.train INFO: Epoch[4] Iteration[400/1065], loss: 32.6222, sdm_loss: 27.9525, id_loss: 4.6697, Base Lr: 6.40e-07
+2026-01-05 21:48:34,945 IRRA.train INFO: Epoch[4] Iteration[500/1065], loss: 32.6196, sdm_loss: 27.9497, id_loss: 4.6698, Base Lr: 6.40e-07
+2026-01-05 21:52:44,501 IRRA.train INFO: Epoch[4] Iteration[600/1065], loss: 32.6169, sdm_loss: 27.9475, id_loss: 4.6694, Base Lr: 6.40e-07
+2026-01-05 21:56:54,623 IRRA.train INFO: Epoch[4] Iteration[700/1065], loss: 32.6142, sdm_loss: 27.9450, id_loss: 4.6693, Base Lr: 6.40e-07
+2026-01-05 22:01:04,561 IRRA.train INFO: Epoch[4] Iteration[800/1065], loss: 32.6124, sdm_loss: 27.9434, id_loss: 4.6691, Base Lr: 6.40e-07
+2026-01-05 22:05:14,695 IRRA.train INFO: Epoch[4] Iteration[900/1065], loss: 32.6107, sdm_loss: 27.9417, id_loss: 4.6691, Base Lr: 6.40e-07
+2026-01-05 22:09:24,573 IRRA.train INFO: Epoch[4] Iteration[1000/1065], loss: 32.6083, sdm_loss: 27.9396, id_loss: 4.6687, Base Lr: 6.40e-07
+2026-01-05 22:12:05,517 IRRA.train INFO: Epoch 4 done. Time per batch: 2.500[s] Speed: 25.6[samples/s]
+2026-01-05 22:12:05,517 IRRA.train INFO: Validation Results - Epoch: 4
+2026-01-05 22:12:42,099 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 0.617 | 2.648 | 5.068 | 1.355 | 0.621 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 22:12:46,722 IRRA.train INFO: Epoch 5: Vision Tower is FROZEN (437/437 params affected).
+2026-01-05 22:16:59,048 IRRA.train INFO: Epoch[5] Iteration[100/1065], loss: 32.5718, sdm_loss: 27.9110, id_loss: 4.6608, Base Lr: 8.20e-07
+2026-01-05 22:21:08,490 IRRA.train INFO: Epoch[5] Iteration[200/1065], loss: 32.5690, sdm_loss: 27.9083, id_loss: 4.6607, Base Lr: 8.20e-07
+2026-01-05 22:25:17,953 IRRA.train INFO: Epoch[5] Iteration[300/1065], loss: 32.5638, sdm_loss: 27.9043, id_loss: 4.6595, Base Lr: 8.20e-07
+2026-01-05 22:29:28,142 IRRA.train INFO: Epoch[5] Iteration[400/1065], loss: 32.5607, sdm_loss: 27.9001, id_loss: 4.6606, Base Lr: 8.20e-07
+2026-01-05 22:33:37,861 IRRA.train INFO: Epoch[5] Iteration[500/1065], loss: 32.5576, sdm_loss: 27.8973, id_loss: 4.6603, Base Lr: 8.20e-07
+2026-01-05 22:37:48,686 IRRA.train INFO: Epoch[5] Iteration[600/1065], loss: 32.5539, sdm_loss: 27.8941, id_loss: 4.6598, Base Lr: 8.20e-07
+2026-01-05 22:41:59,008 IRRA.train INFO: Epoch[5] Iteration[700/1065], loss: 32.5500, sdm_loss: 27.8905, id_loss: 4.6595, Base Lr: 8.20e-07
+2026-01-05 22:46:09,613 IRRA.train INFO: Epoch[5] Iteration[800/1065], loss: 32.5448, sdm_loss: 27.8855, id_loss: 4.6594, Base Lr: 8.20e-07
+2026-01-05 22:50:19,508 IRRA.train INFO: Epoch[5] Iteration[900/1065], loss: 32.5403, sdm_loss: 27.8812, id_loss: 4.6591, Base Lr: 8.20e-07
+2026-01-05 22:54:29,768 IRRA.train INFO: Epoch[5] Iteration[1000/1065], loss: 32.5352, sdm_loss: 27.8764, id_loss: 4.6588, Base Lr: 8.20e-07
+2026-01-05 22:57:11,689 IRRA.train INFO: Epoch 5 done. Time per batch: 2.502[s] Speed: 25.6[samples/s]
+2026-01-05 22:57:11,690 IRRA.train INFO: Validation Results - Epoch: 5
+2026-01-05 22:57:49,865 IRRA.eval INFO: 
++------+-------+-------+-------+-------+-------+
+| task |   R1  |   R5  |  R10  |  mAP  |  mINP |
++------+-------+-------+-------+-------+-------+
+| t2i  | 1.267 | 5.068 | 8.853 | 2.311 | 1.081 |
++------+-------+-------+-------+-------+-------+
+2026-01-05 22:57:54,116 IRRA.train INFO: Epoch 6: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 23:02:52,988 IRRA.train INFO: Epoch[6] Iteration[100/1065], loss: 32.4594, sdm_loss: 27.8104, id_loss: 4.6490, Base Lr: 1.00e-06
+2026-01-05 23:07:49,569 IRRA.train INFO: Epoch[6] Iteration[200/1065], loss: 32.4412, sdm_loss: 27.7926, id_loss: 4.6486, Base Lr: 1.00e-06
+2026-01-05 23:12:46,150 IRRA.train INFO: Epoch[6] Iteration[300/1065], loss: 32.4257, sdm_loss: 27.7774, id_loss: 4.6483, Base Lr: 1.00e-06
+2026-01-05 23:17:42,567 IRRA.train INFO: Epoch[6] Iteration[400/1065], loss: 32.4145, sdm_loss: 27.7671, id_loss: 4.6475, Base Lr: 1.00e-06
+2026-01-05 23:22:38,950 IRRA.train INFO: Epoch[6] Iteration[500/1065], loss: 32.3959, sdm_loss: 27.7488, id_loss: 4.6471, Base Lr: 1.00e-06
+2026-01-05 23:27:35,328 IRRA.train INFO: Epoch[6] Iteration[600/1065], loss: 32.3803, sdm_loss: 27.7335, id_loss: 4.6467, Base Lr: 1.00e-06
+2026-01-05 23:32:31,824 IRRA.train INFO: Epoch[6] Iteration[700/1065], loss: 32.3602, sdm_loss: 27.7134, id_loss: 4.6468, Base Lr: 1.00e-06
+2026-01-05 23:37:28,233 IRRA.train INFO: Epoch[6] Iteration[800/1065], loss: 32.3290, sdm_loss: 27.6827, id_loss: 4.6463, Base Lr: 1.00e-06
+2026-01-05 23:42:24,782 IRRA.train INFO: Epoch[6] Iteration[900/1065], loss: 32.2958, sdm_loss: 27.6500, id_loss: 4.6458, Base Lr: 1.00e-06
+2026-01-05 23:47:21,384 IRRA.train INFO: Epoch[6] Iteration[1000/1065], loss: 32.2470, sdm_loss: 27.6015, id_loss: 4.6455, Base Lr: 1.00e-06
+2026-01-05 23:50:32,658 IRRA.train INFO: Epoch 6 done. Time per batch: 2.966[s] Speed: 21.6[samples/s]
+2026-01-05 23:50:32,658 IRRA.train INFO: Validation Results - Epoch: 6
+2026-01-05 23:51:07,771 IRRA.eval INFO: 
++------+-------+--------+--------+-------+-------+
+| task |   R1  |   R5   |  R10   |  mAP  |  mINP |
++------+-------+--------+--------+-------+-------+
+| t2i  | 3.882 | 12.313 | 18.957 | 5.293 | 2.310 |
++------+-------+--------+--------+-------+-------+
+2026-01-05 23:51:13,723 IRRA.train INFO: Epoch 7: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-05 23:56:12,547 IRRA.train INFO: Epoch[7] Iteration[100/1065], loss: 31.1364, sdm_loss: 26.5012, id_loss: 4.6352, Base Lr: 9.99e-07
+2026-01-06 00:01:09,083 IRRA.train INFO: Epoch[7] Iteration[200/1065], loss: 30.9631, sdm_loss: 26.3286, id_loss: 4.6345, Base Lr: 9.99e-07
+2026-01-06 00:06:05,615 IRRA.train INFO: Epoch[7] Iteration[300/1065], loss: 30.6954, sdm_loss: 26.0610, id_loss: 4.6344, Base Lr: 9.99e-07
+2026-01-06 00:11:02,053 IRRA.train INFO: Epoch[7] Iteration[400/1065], loss: 30.4419, sdm_loss: 25.8077, id_loss: 4.6342, Base Lr: 9.99e-07
+2026-01-06 00:15:58,422 IRRA.train INFO: Epoch[7] Iteration[500/1065], loss: 30.2084, sdm_loss: 25.5748, id_loss: 4.6335, Base Lr: 9.99e-07
+2026-01-06 00:20:54,762 IRRA.train INFO: Epoch[7] Iteration[600/1065], loss: 29.9605, sdm_loss: 25.3272, id_loss: 4.6333, Base Lr: 9.99e-07
+2026-01-06 00:25:50,943 IRRA.train INFO: Epoch[7] Iteration[700/1065], loss: 29.7358, sdm_loss: 25.1027, id_loss: 4.6331, Base Lr: 9.99e-07
+2026-01-06 00:30:47,639 IRRA.train INFO: Epoch[7] Iteration[800/1065], loss: 29.5458, sdm_loss: 24.9128, id_loss: 4.6330, Base Lr: 9.99e-07
+2026-01-06 00:35:43,997 IRRA.train INFO: Epoch[7] Iteration[900/1065], loss: 29.3501, sdm_loss: 24.7177, id_loss: 4.6324, Base Lr: 9.99e-07
+2026-01-06 00:40:40,564 IRRA.train INFO: Epoch[7] Iteration[1000/1065], loss: 29.1843, sdm_loss: 24.5522, id_loss: 4.6321, Base Lr: 9.99e-07
+2026-01-06 00:43:51,738 IRRA.train INFO: Epoch 7 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 00:43:51,739 IRRA.train INFO: Validation Results - Epoch: 7
+2026-01-06 00:44:27,473 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 10.786 | 27.599 | 37.979 | 11.280 | 4.847 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 00:44:33,856 IRRA.train INFO: Epoch 8: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 00:49:32,416 IRRA.train INFO: Epoch[8] Iteration[100/1065], loss: 26.8834, sdm_loss: 22.2606, id_loss: 4.6228, Base Lr: 9.97e-07
+2026-01-06 00:54:28,761 IRRA.train INFO: Epoch[8] Iteration[200/1065], loss: 26.7048, sdm_loss: 22.0811, id_loss: 4.6236, Base Lr: 9.97e-07
+2026-01-06 00:59:25,121 IRRA.train INFO: Epoch[8] Iteration[300/1065], loss: 26.6552, sdm_loss: 22.0322, id_loss: 4.6230, Base Lr: 9.97e-07
+2026-01-06 01:04:21,617 IRRA.train INFO: Epoch[8] Iteration[400/1065], loss: 26.5285, sdm_loss: 21.9065, id_loss: 4.6220, Base Lr: 9.97e-07
+2026-01-06 01:09:18,041 IRRA.train INFO: Epoch[8] Iteration[500/1065], loss: 26.4658, sdm_loss: 21.8440, id_loss: 4.6218, Base Lr: 9.97e-07
+2026-01-06 01:14:14,160 IRRA.train INFO: Epoch[8] Iteration[600/1065], loss: 26.3703, sdm_loss: 21.7492, id_loss: 4.6211, Base Lr: 9.97e-07
+2026-01-06 01:19:10,636 IRRA.train INFO: Epoch[8] Iteration[700/1065], loss: 26.3101, sdm_loss: 21.6896, id_loss: 4.6205, Base Lr: 9.97e-07
+2026-01-06 01:24:07,200 IRRA.train INFO: Epoch[8] Iteration[800/1065], loss: 26.2491, sdm_loss: 21.6291, id_loss: 4.6199, Base Lr: 9.97e-07
+2026-01-06 01:29:03,709 IRRA.train INFO: Epoch[8] Iteration[900/1065], loss: 26.1442, sdm_loss: 21.5247, id_loss: 4.6195, Base Lr: 9.97e-07
+2026-01-06 01:34:00,254 IRRA.train INFO: Epoch[8] Iteration[1000/1065], loss: 26.0828, sdm_loss: 21.4638, id_loss: 4.6189, Base Lr: 9.97e-07
+2026-01-06 01:37:11,301 IRRA.train INFO: Epoch 8 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 01:37:11,301 IRRA.train INFO: Validation Results - Epoch: 8
+2026-01-06 01:37:48,354 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 14.051 | 33.739 | 44.282 | 13.997 | 6.147 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 01:37:54,694 IRRA.train INFO: Epoch 9: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 01:42:53,044 IRRA.train INFO: Epoch[9] Iteration[100/1065], loss: 24.5729, sdm_loss: 19.9648, id_loss: 4.6081, Base Lr: 9.93e-07
+2026-01-06 01:47:49,301 IRRA.train INFO: Epoch[9] Iteration[200/1065], loss: 24.7906, sdm_loss: 20.1829, id_loss: 4.6077, Base Lr: 9.93e-07
+2026-01-06 01:52:45,733 IRRA.train INFO: Epoch[9] Iteration[300/1065], loss: 24.7112, sdm_loss: 20.1032, id_loss: 4.6080, Base Lr: 9.93e-07
+2026-01-06 01:57:42,198 IRRA.train INFO: Epoch[9] Iteration[400/1065], loss: 24.6956, sdm_loss: 20.0880, id_loss: 4.6076, Base Lr: 9.93e-07
+2026-01-06 02:02:38,794 IRRA.train INFO: Epoch[9] Iteration[500/1065], loss: 24.6742, sdm_loss: 20.0669, id_loss: 4.6073, Base Lr: 9.93e-07
+2026-01-06 02:07:35,372 IRRA.train INFO: Epoch[9] Iteration[600/1065], loss: 24.6068, sdm_loss: 20.0000, id_loss: 4.6068, Base Lr: 9.93e-07
+2026-01-06 02:12:32,179 IRRA.train INFO: Epoch[9] Iteration[700/1065], loss: 24.5176, sdm_loss: 19.9112, id_loss: 4.6064, Base Lr: 9.93e-07
+2026-01-06 02:17:28,399 IRRA.train INFO: Epoch[9] Iteration[800/1065], loss: 24.4742, sdm_loss: 19.8681, id_loss: 4.6061, Base Lr: 9.93e-07
+2026-01-06 02:22:24,816 IRRA.train INFO: Epoch[9] Iteration[900/1065], loss: 24.4170, sdm_loss: 19.8115, id_loss: 4.6055, Base Lr: 9.93e-07
+2026-01-06 02:27:21,243 IRRA.train INFO: Epoch[9] Iteration[1000/1065], loss: 24.3868, sdm_loss: 19.7819, id_loss: 4.6049, Base Lr: 9.93e-07
+2026-01-06 02:30:32,394 IRRA.train INFO: Epoch 9 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 02:30:32,394 IRRA.train INFO: Validation Results - Epoch: 9
+2026-01-06 02:31:08,176 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 16.407 | 36.940 | 47.628 | 15.775 | 7.007 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 02:31:14,970 IRRA.train INFO: Epoch 10: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 02:36:13,627 IRRA.train INFO: Epoch[10] Iteration[100/1065], loss: 23.8526, sdm_loss: 19.2547, id_loss: 4.5979, Base Lr: 9.87e-07
+2026-01-06 02:41:09,785 IRRA.train INFO: Epoch[10] Iteration[200/1065], loss: 23.6413, sdm_loss: 19.0457, id_loss: 4.5956, Base Lr: 9.87e-07
+2026-01-06 02:46:06,212 IRRA.train INFO: Epoch[10] Iteration[300/1065], loss: 23.6266, sdm_loss: 19.0323, id_loss: 4.5943, Base Lr: 9.87e-07
+2026-01-06 02:51:02,406 IRRA.train INFO: Epoch[10] Iteration[400/1065], loss: 23.5271, sdm_loss: 18.9335, id_loss: 4.5936, Base Lr: 9.87e-07
+2026-01-06 02:55:58,787 IRRA.train INFO: Epoch[10] Iteration[500/1065], loss: 23.4845, sdm_loss: 18.8918, id_loss: 4.5927, Base Lr: 9.87e-07
+2026-01-06 03:00:55,092 IRRA.train INFO: Epoch[10] Iteration[600/1065], loss: 23.4477, sdm_loss: 18.8553, id_loss: 4.5924, Base Lr: 9.87e-07
+2026-01-06 03:05:51,411 IRRA.train INFO: Epoch[10] Iteration[700/1065], loss: 23.3954, sdm_loss: 18.8038, id_loss: 4.5916, Base Lr: 9.87e-07
+2026-01-06 03:10:47,661 IRRA.train INFO: Epoch[10] Iteration[800/1065], loss: 23.3207, sdm_loss: 18.7296, id_loss: 4.5910, Base Lr: 9.87e-07
+2026-01-06 03:15:43,895 IRRA.train INFO: Epoch[10] Iteration[900/1065], loss: 23.2814, sdm_loss: 18.6910, id_loss: 4.5904, Base Lr: 9.87e-07
+2026-01-06 03:20:39,849 IRRA.train INFO: Epoch[10] Iteration[1000/1065], loss: 23.2320, sdm_loss: 18.6424, id_loss: 4.5896, Base Lr: 9.87e-07
+2026-01-06 03:23:50,694 IRRA.train INFO: Epoch 10 done. Time per batch: 2.963[s] Speed: 21.6[samples/s]
+2026-01-06 03:23:50,694 IRRA.train INFO: Validation Results - Epoch: 10
+2026-01-06 03:24:27,859 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 18.291 | 39.701 | 50.162 | 17.194 | 7.717 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 03:24:34,269 IRRA.train INFO: Epoch 11: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 03:29:33,317 IRRA.train INFO: Epoch[11] Iteration[100/1065], loss: 22.3705, sdm_loss: 17.7910, id_loss: 4.5795, Base Lr: 9.80e-07
+2026-01-06 03:34:29,497 IRRA.train INFO: Epoch[11] Iteration[200/1065], loss: 22.4588, sdm_loss: 17.8803, id_loss: 4.5784, Base Lr: 9.80e-07
+2026-01-06 03:39:25,733 IRRA.train INFO: Epoch[11] Iteration[300/1065], loss: 22.4344, sdm_loss: 17.8566, id_loss: 4.5777, Base Lr: 9.80e-07
+2026-01-06 03:44:22,051 IRRA.train INFO: Epoch[11] Iteration[400/1065], loss: 22.4680, sdm_loss: 17.8904, id_loss: 4.5776, Base Lr: 9.80e-07
+2026-01-06 03:49:18,594 IRRA.train INFO: Epoch[11] Iteration[500/1065], loss: 22.4656, sdm_loss: 17.8890, id_loss: 4.5767, Base Lr: 9.80e-07
+2026-01-06 03:54:14,893 IRRA.train INFO: Epoch[11] Iteration[600/1065], loss: 22.4293, sdm_loss: 17.8531, id_loss: 4.5762, Base Lr: 9.80e-07
+2026-01-06 03:59:11,354 IRRA.train INFO: Epoch[11] Iteration[700/1065], loss: 22.4030, sdm_loss: 17.8275, id_loss: 4.5755, Base Lr: 9.80e-07
+2026-01-06 04:04:07,793 IRRA.train INFO: Epoch[11] Iteration[800/1065], loss: 22.3884, sdm_loss: 17.8131, id_loss: 4.5752, Base Lr: 9.80e-07
+2026-01-06 04:09:04,245 IRRA.train INFO: Epoch[11] Iteration[900/1065], loss: 22.3766, sdm_loss: 17.8017, id_loss: 4.5749, Base Lr: 9.80e-07
+2026-01-06 04:14:00,584 IRRA.train INFO: Epoch[11] Iteration[1000/1065], loss: 22.3524, sdm_loss: 17.7782, id_loss: 4.5742, Base Lr: 9.80e-07
+2026-01-06 04:17:11,676 IRRA.train INFO: Epoch 11 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 04:17:11,677 IRRA.train INFO: Validation Results - Epoch: 11
+2026-01-06 04:17:48,186 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 20.045 | 41.650 | 52.372 | 18.416 | 8.344 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 04:17:56,132 IRRA.train INFO: Epoch 12: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 04:22:54,835 IRRA.train INFO: Epoch[12] Iteration[100/1065], loss: 21.6902, sdm_loss: 17.1277, id_loss: 4.5625, Base Lr: 9.71e-07
+2026-01-06 04:27:51,224 IRRA.train INFO: Epoch[12] Iteration[200/1065], loss: 21.6290, sdm_loss: 17.0664, id_loss: 4.5626, Base Lr: 9.71e-07
+2026-01-06 04:32:47,537 IRRA.train INFO: Epoch[12] Iteration[300/1065], loss: 21.6242, sdm_loss: 17.0618, id_loss: 4.5624, Base Lr: 9.71e-07
+2026-01-06 04:37:44,054 IRRA.train INFO: Epoch[12] Iteration[400/1065], loss: 21.6079, sdm_loss: 17.0468, id_loss: 4.5612, Base Lr: 9.71e-07
+2026-01-06 04:42:40,324 IRRA.train INFO: Epoch[12] Iteration[500/1065], loss: 21.6215, sdm_loss: 17.0609, id_loss: 4.5606, Base Lr: 9.71e-07
+2026-01-06 04:47:36,674 IRRA.train INFO: Epoch[12] Iteration[600/1065], loss: 21.5779, sdm_loss: 17.0178, id_loss: 4.5601, Base Lr: 9.71e-07
+2026-01-06 04:52:33,141 IRRA.train INFO: Epoch[12] Iteration[700/1065], loss: 21.6124, sdm_loss: 17.0527, id_loss: 4.5597, Base Lr: 9.71e-07
+2026-01-06 04:57:29,633 IRRA.train INFO: Epoch[12] Iteration[800/1065], loss: 21.6220, sdm_loss: 17.0625, id_loss: 4.5595, Base Lr: 9.71e-07
+2026-01-06 05:02:25,951 IRRA.train INFO: Epoch[12] Iteration[900/1065], loss: 21.6100, sdm_loss: 17.0510, id_loss: 4.5589, Base Lr: 9.71e-07
+2026-01-06 05:07:22,514 IRRA.train INFO: Epoch[12] Iteration[1000/1065], loss: 21.6004, sdm_loss: 17.0419, id_loss: 4.5585, Base Lr: 9.71e-07
+2026-01-06 05:10:33,565 IRRA.train INFO: Epoch 12 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 05:10:33,566 IRRA.train INFO: Validation Results - Epoch: 12
+2026-01-06 05:11:10,285 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 20.955 | 42.479 | 53.281 | 19.175 | 8.778 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 05:11:15,635 IRRA.train INFO: Epoch 13: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 05:16:14,744 IRRA.train INFO: Epoch[13] Iteration[100/1065], loss: 21.1571, sdm_loss: 16.6091, id_loss: 4.5479, Base Lr: 9.61e-07
+2026-01-06 05:21:11,044 IRRA.train INFO: Epoch[13] Iteration[200/1065], loss: 21.0866, sdm_loss: 16.5396, id_loss: 4.5471, Base Lr: 9.61e-07
+2026-01-06 05:26:07,391 IRRA.train INFO: Epoch[13] Iteration[300/1065], loss: 21.1001, sdm_loss: 16.5536, id_loss: 4.5464, Base Lr: 9.61e-07
+2026-01-06 05:31:03,864 IRRA.train INFO: Epoch[13] Iteration[400/1065], loss: 21.1506, sdm_loss: 16.6052, id_loss: 4.5454, Base Lr: 9.61e-07
+2026-01-06 05:36:00,069 IRRA.train INFO: Epoch[13] Iteration[500/1065], loss: 21.1527, sdm_loss: 16.6076, id_loss: 4.5451, Base Lr: 9.61e-07
+2026-01-06 05:40:56,249 IRRA.train INFO: Epoch[13] Iteration[600/1065], loss: 21.1028, sdm_loss: 16.5583, id_loss: 4.5445, Base Lr: 9.61e-07
+2026-01-06 05:45:52,550 IRRA.train INFO: Epoch[13] Iteration[700/1065], loss: 21.0548, sdm_loss: 16.5108, id_loss: 4.5439, Base Lr: 9.61e-07
+2026-01-06 05:50:48,730 IRRA.train INFO: Epoch[13] Iteration[800/1065], loss: 21.0554, sdm_loss: 16.5118, id_loss: 4.5436, Base Lr: 9.61e-07
+2026-01-06 05:55:44,758 IRRA.train INFO: Epoch[13] Iteration[900/1065], loss: 21.0303, sdm_loss: 16.4873, id_loss: 4.5430, Base Lr: 9.61e-07
+2026-01-06 06:00:40,841 IRRA.train INFO: Epoch[13] Iteration[1000/1065], loss: 21.0139, sdm_loss: 16.4714, id_loss: 4.5425, Base Lr: 9.61e-07
+2026-01-06 06:03:51,967 IRRA.train INFO: Epoch 13 done. Time per batch: 2.964[s] Speed: 21.6[samples/s]
+2026-01-06 06:03:51,967 IRRA.train INFO: Validation Results - Epoch: 13
+2026-01-06 06:04:29,789 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 22.531 | 43.762 | 54.825 | 20.094 | 9.247 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 06:04:35,049 IRRA.train INFO: Epoch 14: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 06:09:33,166 IRRA.train INFO: Epoch[14] Iteration[100/1065], loss: 20.5572, sdm_loss: 16.0271, id_loss: 4.5301, Base Lr: 9.49e-07
+2026-01-06 06:14:29,271 IRRA.train INFO: Epoch[14] Iteration[200/1065], loss: 20.6794, sdm_loss: 16.1482, id_loss: 4.5312, Base Lr: 9.49e-07
+2026-01-06 06:19:25,385 IRRA.train INFO: Epoch[14] Iteration[300/1065], loss: 20.5523, sdm_loss: 16.0216, id_loss: 4.5307, Base Lr: 9.49e-07
+2026-01-06 06:24:21,871 IRRA.train INFO: Epoch[14] Iteration[400/1065], loss: 20.5824, sdm_loss: 16.0524, id_loss: 4.5300, Base Lr: 9.49e-07
+2026-01-06 06:29:18,175 IRRA.train INFO: Epoch[14] Iteration[500/1065], loss: 20.5579, sdm_loss: 16.0283, id_loss: 4.5296, Base Lr: 9.49e-07
+2026-01-06 06:34:14,596 IRRA.train INFO: Epoch[14] Iteration[600/1065], loss: 20.5367, sdm_loss: 16.0075, id_loss: 4.5292, Base Lr: 9.49e-07
+2026-01-06 06:39:11,097 IRRA.train INFO: Epoch[14] Iteration[700/1065], loss: 20.5342, sdm_loss: 16.0055, id_loss: 4.5287, Base Lr: 9.49e-07
+2026-01-06 06:44:07,601 IRRA.train INFO: Epoch[14] Iteration[800/1065], loss: 20.5333, sdm_loss: 16.0051, id_loss: 4.5282, Base Lr: 9.49e-07
+2026-01-06 06:49:03,914 IRRA.train INFO: Epoch[14] Iteration[900/1065], loss: 20.5258, sdm_loss: 15.9982, id_loss: 4.5276, Base Lr: 9.49e-07
+2026-01-06 06:54:00,393 IRRA.train INFO: Epoch[14] Iteration[1000/1065], loss: 20.5015, sdm_loss: 15.9745, id_loss: 4.5270, Base Lr: 9.49e-07
+2026-01-06 06:57:11,463 IRRA.train INFO: Epoch 14 done. Time per batch: 2.964[s] Speed: 21.6[samples/s]
+2026-01-06 06:57:11,464 IRRA.train INFO: Validation Results - Epoch: 14
+2026-01-06 06:57:47,967 IRRA.eval INFO: 
++------+--------+--------+--------+--------+-------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP |
++------+--------+--------+--------+--------+-------+
+| t2i  | 23.506 | 45.289 | 56.157 | 20.894 | 9.610 |
++------+--------+--------+--------+--------+-------+
+2026-01-06 06:57:52,726 IRRA.train INFO: Epoch 15: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 07:02:50,923 IRRA.train INFO: Epoch[15] Iteration[100/1065], loss: 19.9610, sdm_loss: 15.4454, id_loss: 4.5157, Base Lr: 9.35e-07
+2026-01-06 07:07:47,412 IRRA.train INFO: Epoch[15] Iteration[200/1065], loss: 20.0771, sdm_loss: 15.5614, id_loss: 4.5157, Base Lr: 9.35e-07
+2026-01-06 07:12:43,814 IRRA.train INFO: Epoch[15] Iteration[300/1065], loss: 20.0926, sdm_loss: 15.5773, id_loss: 4.5152, Base Lr: 9.35e-07
+2026-01-06 07:17:40,214 IRRA.train INFO: Epoch[15] Iteration[400/1065], loss: 20.0903, sdm_loss: 15.5757, id_loss: 4.5146, Base Lr: 9.35e-07
+2026-01-06 07:22:36,389 IRRA.train INFO: Epoch[15] Iteration[500/1065], loss: 20.1442, sdm_loss: 15.6300, id_loss: 4.5142, Base Lr: 9.35e-07
+2026-01-06 07:27:32,841 IRRA.train INFO: Epoch[15] Iteration[600/1065], loss: 20.1154, sdm_loss: 15.6023, id_loss: 4.5131, Base Lr: 9.35e-07
+2026-01-06 07:32:29,374 IRRA.train INFO: Epoch[15] Iteration[700/1065], loss: 20.0688, sdm_loss: 15.5562, id_loss: 4.5126, Base Lr: 9.35e-07
+2026-01-06 07:37:25,837 IRRA.train INFO: Epoch[15] Iteration[800/1065], loss: 20.0421, sdm_loss: 15.5298, id_loss: 4.5123, Base Lr: 9.35e-07
+2026-01-06 07:42:22,280 IRRA.train INFO: Epoch[15] Iteration[900/1065], loss: 20.0459, sdm_loss: 15.5342, id_loss: 4.5117, Base Lr: 9.35e-07
+2026-01-06 07:47:18,679 IRRA.train INFO: Epoch[15] Iteration[1000/1065], loss: 19.9880, sdm_loss: 15.4768, id_loss: 4.5112, Base Lr: 9.35e-07
+2026-01-06 07:50:29,730 IRRA.train INFO: Epoch 15 done. Time per batch: 2.964[s] Speed: 21.6[samples/s]
+2026-01-06 07:50:29,730 IRRA.train INFO: Validation Results - Epoch: 15
+2026-01-06 07:51:07,074 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 23.879 | 46.085 | 57.294 | 21.476 | 10.042 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 07:51:12,897 IRRA.train INFO: Epoch 16: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 07:56:10,906 IRRA.train INFO: Epoch[16] Iteration[100/1065], loss: 19.8787, sdm_loss: 15.3785, id_loss: 4.5002, Base Lr: 9.21e-07
+2026-01-06 08:01:06,789 IRRA.train INFO: Epoch[16] Iteration[200/1065], loss: 19.7616, sdm_loss: 15.2627, id_loss: 4.4988, Base Lr: 9.21e-07
+2026-01-06 08:06:03,009 IRRA.train INFO: Epoch[16] Iteration[300/1065], loss: 19.7723, sdm_loss: 15.2736, id_loss: 4.4988, Base Lr: 9.21e-07
+2026-01-06 08:10:59,114 IRRA.train INFO: Epoch[16] Iteration[400/1065], loss: 19.6993, sdm_loss: 15.2010, id_loss: 4.4983, Base Lr: 9.21e-07
+2026-01-06 08:15:55,222 IRRA.train INFO: Epoch[16] Iteration[500/1065], loss: 19.6866, sdm_loss: 15.1888, id_loss: 4.4978, Base Lr: 9.21e-07
+2026-01-06 08:20:51,472 IRRA.train INFO: Epoch[16] Iteration[600/1065], loss: 19.6825, sdm_loss: 15.1853, id_loss: 4.4973, Base Lr: 9.21e-07
+2026-01-06 08:25:47,564 IRRA.train INFO: Epoch[16] Iteration[700/1065], loss: 19.6529, sdm_loss: 15.1559, id_loss: 4.4970, Base Lr: 9.21e-07
+2026-01-06 08:30:43,680 IRRA.train INFO: Epoch[16] Iteration[800/1065], loss: 19.6119, sdm_loss: 15.1157, id_loss: 4.4963, Base Lr: 9.21e-07
+2026-01-06 08:35:39,822 IRRA.train INFO: Epoch[16] Iteration[900/1065], loss: 19.5937, sdm_loss: 15.0981, id_loss: 4.4955, Base Lr: 9.21e-07
+2026-01-06 08:40:36,159 IRRA.train INFO: Epoch[16] Iteration[1000/1065], loss: 19.5602, sdm_loss: 15.0655, id_loss: 4.4947, Base Lr: 9.21e-07
+2026-01-06 08:43:47,117 IRRA.train INFO: Epoch 16 done. Time per batch: 2.962[s] Speed: 21.6[samples/s]
+2026-01-06 08:43:47,117 IRRA.train INFO: Validation Results - Epoch: 16
+2026-01-06 08:44:23,973 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 24.659 | 46.881 | 58.090 | 21.976 | 10.293 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 08:44:29,551 IRRA.train INFO: Epoch 17: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 08:49:27,664 IRRA.train INFO: Epoch[17] Iteration[100/1065], loss: 19.3923, sdm_loss: 14.9095, id_loss: 4.4828, Base Lr: 9.05e-07
+2026-01-06 08:54:24,085 IRRA.train INFO: Epoch[17] Iteration[200/1065], loss: 19.2058, sdm_loss: 14.7240, id_loss: 4.4818, Base Lr: 9.05e-07
+2026-01-06 08:59:20,463 IRRA.train INFO: Epoch[17] Iteration[300/1065], loss: 19.1781, sdm_loss: 14.6964, id_loss: 4.4817, Base Lr: 9.05e-07
+2026-01-06 09:04:16,828 IRRA.train INFO: Epoch[17] Iteration[400/1065], loss: 19.1869, sdm_loss: 14.7047, id_loss: 4.4822, Base Lr: 9.05e-07
+2026-01-06 09:09:13,302 IRRA.train INFO: Epoch[17] Iteration[500/1065], loss: 19.1480, sdm_loss: 14.6667, id_loss: 4.4813, Base Lr: 9.05e-07
+2026-01-06 09:14:09,757 IRRA.train INFO: Epoch[17] Iteration[600/1065], loss: 19.2231, sdm_loss: 14.7426, id_loss: 4.4805, Base Lr: 9.05e-07
+2026-01-06 09:19:06,110 IRRA.train INFO: Epoch[17] Iteration[700/1065], loss: 19.1908, sdm_loss: 14.7110, id_loss: 4.4798, Base Lr: 9.05e-07
+2026-01-06 09:24:02,819 IRRA.train INFO: Epoch[17] Iteration[800/1065], loss: 19.1711, sdm_loss: 14.6916, id_loss: 4.4794, Base Lr: 9.05e-07
+2026-01-06 09:28:59,242 IRRA.train INFO: Epoch[17] Iteration[900/1065], loss: 19.1521, sdm_loss: 14.6733, id_loss: 4.4788, Base Lr: 9.05e-07
+2026-01-06 09:33:55,711 IRRA.train INFO: Epoch[17] Iteration[1000/1065], loss: 19.1494, sdm_loss: 14.6713, id_loss: 4.4780, Base Lr: 9.05e-07
+2026-01-06 09:37:06,853 IRRA.train INFO: Epoch 17 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 09:37:06,853 IRRA.train INFO: Validation Results - Epoch: 17
+2026-01-06 09:37:42,780 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 24.805 | 47.352 | 59.016 | 22.401 | 10.591 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 09:37:48,458 IRRA.train INFO: Epoch 18: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 09:42:46,662 IRRA.train INFO: Epoch[18] Iteration[100/1065], loss: 18.7829, sdm_loss: 14.3129, id_loss: 4.4700, Base Lr: 8.87e-07
+2026-01-06 09:47:43,051 IRRA.train INFO: Epoch[18] Iteration[200/1065], loss: 18.9087, sdm_loss: 14.4408, id_loss: 4.4680, Base Lr: 8.87e-07
+2026-01-06 09:52:39,254 IRRA.train INFO: Epoch[18] Iteration[300/1065], loss: 18.8257, sdm_loss: 14.3597, id_loss: 4.4661, Base Lr: 8.87e-07
+2026-01-06 09:57:35,370 IRRA.train INFO: Epoch[18] Iteration[400/1065], loss: 18.8493, sdm_loss: 14.3833, id_loss: 4.4660, Base Lr: 8.87e-07
+2026-01-06 10:02:31,831 IRRA.train INFO: Epoch[18] Iteration[500/1065], loss: 18.8469, sdm_loss: 14.3816, id_loss: 4.4653, Base Lr: 8.87e-07
+2026-01-06 10:07:28,004 IRRA.train INFO: Epoch[18] Iteration[600/1065], loss: 18.8627, sdm_loss: 14.3982, id_loss: 4.4645, Base Lr: 8.87e-07
+2026-01-06 10:12:24,171 IRRA.train INFO: Epoch[18] Iteration[700/1065], loss: 18.8672, sdm_loss: 14.4033, id_loss: 4.4639, Base Lr: 8.87e-07
+2026-01-06 10:17:20,307 IRRA.train INFO: Epoch[18] Iteration[800/1065], loss: 18.8777, sdm_loss: 14.4145, id_loss: 4.4633, Base Lr: 8.87e-07
+2026-01-06 10:22:16,879 IRRA.train INFO: Epoch[18] Iteration[900/1065], loss: 18.8777, sdm_loss: 14.4152, id_loss: 4.4626, Base Lr: 8.87e-07
+2026-01-06 10:27:13,198 IRRA.train INFO: Epoch[18] Iteration[1000/1065], loss: 18.8675, sdm_loss: 14.4056, id_loss: 4.4619, Base Lr: 8.87e-07
+2026-01-06 10:30:24,247 IRRA.train INFO: Epoch 18 done. Time per batch: 2.963[s] Speed: 21.6[samples/s]
+2026-01-06 10:30:24,248 IRRA.train INFO: Validation Results - Epoch: 18
+2026-01-06 10:31:00,890 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 25.309 | 48.116 | 59.113 | 22.790 | 10.851 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 10:31:06,314 IRRA.train INFO: Epoch 19: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 10:36:05,574 IRRA.train INFO: Epoch[19] Iteration[100/1065], loss: 18.7842, sdm_loss: 14.3337, id_loss: 4.4505, Base Lr: 8.68e-07
+2026-01-06 10:41:01,913 IRRA.train INFO: Epoch[19] Iteration[200/1065], loss: 18.6462, sdm_loss: 14.1966, id_loss: 4.4496, Base Lr: 8.68e-07
+2026-01-06 10:45:58,265 IRRA.train INFO: Epoch[19] Iteration[300/1065], loss: 18.5641, sdm_loss: 14.1152, id_loss: 4.4489, Base Lr: 8.68e-07
+2026-01-06 10:50:54,609 IRRA.train INFO: Epoch[19] Iteration[400/1065], loss: 18.6017, sdm_loss: 14.1531, id_loss: 4.4486, Base Lr: 8.68e-07
+2026-01-06 10:55:51,269 IRRA.train INFO: Epoch[19] Iteration[500/1065], loss: 18.5968, sdm_loss: 14.1483, id_loss: 4.4485, Base Lr: 8.68e-07
+2026-01-06 11:00:47,872 IRRA.train INFO: Epoch[19] Iteration[600/1065], loss: 18.5625, sdm_loss: 14.1146, id_loss: 4.4479, Base Lr: 8.68e-07
+2026-01-06 11:05:44,574 IRRA.train INFO: Epoch[19] Iteration[700/1065], loss: 18.5561, sdm_loss: 14.1093, id_loss: 4.4468, Base Lr: 8.68e-07
+2026-01-06 11:10:41,141 IRRA.train INFO: Epoch[19] Iteration[800/1065], loss: 18.5443, sdm_loss: 14.0984, id_loss: 4.4458, Base Lr: 8.68e-07
+2026-01-06 11:15:37,940 IRRA.train INFO: Epoch[19] Iteration[900/1065], loss: 18.5217, sdm_loss: 14.0763, id_loss: 4.4454, Base Lr: 8.68e-07
+2026-01-06 11:20:34,398 IRRA.train INFO: Epoch[19] Iteration[1000/1065], loss: 18.5467, sdm_loss: 14.1019, id_loss: 4.4447, Base Lr: 8.68e-07
+2026-01-06 11:23:45,693 IRRA.train INFO: Epoch 19 done. Time per batch: 2.967[s] Speed: 21.6[samples/s]
+2026-01-06 11:23:45,694 IRRA.train INFO: Validation Results - Epoch: 19
+2026-01-06 11:24:23,303 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 25.942 | 48.587 | 59.763 | 23.239 | 11.176 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 11:24:28,910 IRRA.train INFO: Epoch 20: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 11:29:27,935 IRRA.train INFO: Epoch[20] Iteration[100/1065], loss: 18.1842, sdm_loss: 13.7523, id_loss: 4.4318, Base Lr: 8.48e-07
+2026-01-06 11:34:24,296 IRRA.train INFO: Epoch[20] Iteration[200/1065], loss: 18.2400, sdm_loss: 13.8079, id_loss: 4.4321, Base Lr: 8.48e-07
+2026-01-06 11:39:20,629 IRRA.train INFO: Epoch[20] Iteration[300/1065], loss: 18.3133, sdm_loss: 13.8817, id_loss: 4.4316, Base Lr: 8.48e-07
+2026-01-06 11:44:16,972 IRRA.train INFO: Epoch[20] Iteration[400/1065], loss: 18.2968, sdm_loss: 13.8660, id_loss: 4.4308, Base Lr: 8.48e-07
+2026-01-06 11:49:13,545 IRRA.train INFO: Epoch[20] Iteration[500/1065], loss: 18.2432, sdm_loss: 13.8134, id_loss: 4.4297, Base Lr: 8.48e-07
+2026-01-06 11:54:10,327 IRRA.train INFO: Epoch[20] Iteration[600/1065], loss: 18.2329, sdm_loss: 13.8039, id_loss: 4.4290, Base Lr: 8.48e-07
+2026-01-06 11:59:07,323 IRRA.train INFO: Epoch[20] Iteration[700/1065], loss: 18.1947, sdm_loss: 13.7663, id_loss: 4.4283, Base Lr: 8.48e-07
+2026-01-06 12:04:03,987 IRRA.train INFO: Epoch[20] Iteration[800/1065], loss: 18.1693, sdm_loss: 13.7414, id_loss: 4.4279, Base Lr: 8.48e-07
+2026-01-06 12:09:00,743 IRRA.train INFO: Epoch[20] Iteration[900/1065], loss: 18.2133, sdm_loss: 13.7858, id_loss: 4.4275, Base Lr: 8.48e-07
+2026-01-06 12:13:57,187 IRRA.train INFO: Epoch[20] Iteration[1000/1065], loss: 18.2066, sdm_loss: 13.7796, id_loss: 4.4269, Base Lr: 8.48e-07
+2026-01-06 12:17:08,759 IRRA.train INFO: Epoch 20 done. Time per batch: 2.967[s] Speed: 21.6[samples/s]
+2026-01-06 12:17:08,760 IRRA.train INFO: Validation Results - Epoch: 20
+2026-01-06 12:17:45,796 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 26.186 | 48.928 | 60.088 | 23.516 | 11.321 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 12:17:51,616 IRRA.train INFO: Epoch 21: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 12:22:50,177 IRRA.train INFO: Epoch[21] Iteration[100/1065], loss: 17.9375, sdm_loss: 13.5224, id_loss: 4.4150, Base Lr: 8.27e-07
+2026-01-06 12:27:46,489 IRRA.train INFO: Epoch[21] Iteration[200/1065], loss: 17.9301, sdm_loss: 13.5169, id_loss: 4.4131, Base Lr: 8.27e-07
+2026-01-06 12:32:42,748 IRRA.train INFO: Epoch[21] Iteration[300/1065], loss: 17.9554, sdm_loss: 13.5425, id_loss: 4.4128, Base Lr: 8.27e-07
+2026-01-06 12:37:39,168 IRRA.train INFO: Epoch[21] Iteration[400/1065], loss: 17.9822, sdm_loss: 13.5704, id_loss: 4.4118, Base Lr: 8.27e-07
+2026-01-06 12:42:35,577 IRRA.train INFO: Epoch[21] Iteration[500/1065], loss: 17.9592, sdm_loss: 13.5480, id_loss: 4.4112, Base Lr: 8.27e-07
+2026-01-06 12:47:31,989 IRRA.train INFO: Epoch[21] Iteration[600/1065], loss: 17.9936, sdm_loss: 13.5827, id_loss: 4.4109, Base Lr: 8.27e-07
+2026-01-06 12:52:28,321 IRRA.train INFO: Epoch[21] Iteration[700/1065], loss: 18.0005, sdm_loss: 13.5903, id_loss: 4.4102, Base Lr: 8.27e-07
+2026-01-06 12:57:24,844 IRRA.train INFO: Epoch[21] Iteration[800/1065], loss: 17.9453, sdm_loss: 13.5364, id_loss: 4.4089, Base Lr: 8.27e-07
+2026-01-06 13:02:21,377 IRRA.train INFO: Epoch[21] Iteration[900/1065], loss: 17.9416, sdm_loss: 13.5329, id_loss: 4.4087, Base Lr: 8.27e-07
+2026-01-06 13:07:17,723 IRRA.train INFO: Epoch[21] Iteration[1000/1065], loss: 17.9622, sdm_loss: 13.5542, id_loss: 4.4080, Base Lr: 8.27e-07
+2026-01-06 13:10:28,831 IRRA.train INFO: Epoch 21 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 13:10:28,832 IRRA.train INFO: Validation Results - Epoch: 21
+2026-01-06 13:11:06,190 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 26.868 | 49.789 | 60.705 | 23.896 | 11.552 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 13:11:12,104 IRRA.train INFO: Epoch 22: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 13:16:10,653 IRRA.train INFO: Epoch[22] Iteration[100/1065], loss: 17.7252, sdm_loss: 13.3254, id_loss: 4.3998, Base Lr: 8.05e-07
+2026-01-06 13:21:07,122 IRRA.train INFO: Epoch[22] Iteration[200/1065], loss: 17.8238, sdm_loss: 13.4257, id_loss: 4.3981, Base Lr: 8.05e-07
+2026-01-06 13:26:03,578 IRRA.train INFO: Epoch[22] Iteration[300/1065], loss: 17.8281, sdm_loss: 13.4314, id_loss: 4.3967, Base Lr: 8.05e-07
+2026-01-06 13:31:00,081 IRRA.train INFO: Epoch[22] Iteration[400/1065], loss: 17.8435, sdm_loss: 13.4476, id_loss: 4.3959, Base Lr: 8.05e-07
+2026-01-06 13:35:56,591 IRRA.train INFO: Epoch[22] Iteration[500/1065], loss: 17.8323, sdm_loss: 13.4374, id_loss: 4.3949, Base Lr: 8.05e-07
+2026-01-06 13:40:53,816 IRRA.train INFO: Epoch[22] Iteration[600/1065], loss: 17.7916, sdm_loss: 13.3974, id_loss: 4.3942, Base Lr: 8.05e-07
+2026-01-06 13:45:50,875 IRRA.train INFO: Epoch[22] Iteration[700/1065], loss: 17.7949, sdm_loss: 13.4016, id_loss: 4.3933, Base Lr: 8.05e-07
+2026-01-06 13:50:47,610 IRRA.train INFO: Epoch[22] Iteration[800/1065], loss: 17.7698, sdm_loss: 13.3774, id_loss: 4.3924, Base Lr: 8.05e-07
+2026-01-06 13:55:44,712 IRRA.train INFO: Epoch[22] Iteration[900/1065], loss: 17.7684, sdm_loss: 13.3770, id_loss: 4.3914, Base Lr: 8.05e-07
+2026-01-06 14:00:41,862 IRRA.train INFO: Epoch[22] Iteration[1000/1065], loss: 17.7496, sdm_loss: 13.3590, id_loss: 4.3906, Base Lr: 8.05e-07
+2026-01-06 14:03:53,290 IRRA.train INFO: Epoch 22 done. Time per batch: 2.968[s] Speed: 21.6[samples/s]
+2026-01-06 14:03:53,290 IRRA.train INFO: Validation Results - Epoch: 22
+2026-01-06 14:04:30,076 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 27.160 | 50.309 | 60.965 | 24.243 | 11.786 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 14:04:35,928 IRRA.train INFO: Epoch 23: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 14:09:34,987 IRRA.train INFO: Epoch[23] Iteration[100/1065], loss: 17.3894, sdm_loss: 13.0117, id_loss: 4.3777, Base Lr: 7.82e-07
+2026-01-06 14:14:31,456 IRRA.train INFO: Epoch[23] Iteration[200/1065], loss: 17.5513, sdm_loss: 13.1723, id_loss: 4.3790, Base Lr: 7.82e-07
+2026-01-06 14:19:27,443 IRRA.train INFO: Epoch[23] Iteration[300/1065], loss: 17.5253, sdm_loss: 13.1478, id_loss: 4.3775, Base Lr: 7.82e-07
+2026-01-06 14:24:23,931 IRRA.train INFO: Epoch[23] Iteration[400/1065], loss: 17.5156, sdm_loss: 13.1389, id_loss: 4.3767, Base Lr: 7.82e-07
+2026-01-06 14:29:20,136 IRRA.train INFO: Epoch[23] Iteration[500/1065], loss: 17.5419, sdm_loss: 13.1659, id_loss: 4.3760, Base Lr: 7.82e-07
+2026-01-06 14:34:16,334 IRRA.train INFO: Epoch[23] Iteration[600/1065], loss: 17.5308, sdm_loss: 13.1557, id_loss: 4.3751, Base Lr: 7.82e-07
+2026-01-06 14:39:12,647 IRRA.train INFO: Epoch[23] Iteration[700/1065], loss: 17.5398, sdm_loss: 13.1656, id_loss: 4.3742, Base Lr: 7.82e-07
+2026-01-06 14:44:08,792 IRRA.train INFO: Epoch[23] Iteration[800/1065], loss: 17.5099, sdm_loss: 13.1365, id_loss: 4.3734, Base Lr: 7.82e-07
+2026-01-06 14:49:04,996 IRRA.train INFO: Epoch[23] Iteration[900/1065], loss: 17.5023, sdm_loss: 13.1298, id_loss: 4.3725, Base Lr: 7.82e-07
+2026-01-06 14:54:01,042 IRRA.train INFO: Epoch[23] Iteration[1000/1065], loss: 17.4968, sdm_loss: 13.1250, id_loss: 4.3718, Base Lr: 7.82e-07
+2026-01-06 14:57:12,129 IRRA.train INFO: Epoch 23 done. Time per batch: 2.964[s] Speed: 21.6[samples/s]
+2026-01-06 14:57:12,130 IRRA.train INFO: Validation Results - Epoch: 23
+2026-01-06 14:57:50,265 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 27.128 | 50.487 | 61.274 | 24.388 | 11.918 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 14:57:50,306 IRRA.train INFO: Epoch 24: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 15:02:50,367 IRRA.train INFO: Epoch[24] Iteration[100/1065], loss: 17.2237, sdm_loss: 12.8642, id_loss: 4.3595, Base Lr: 7.58e-07
+2026-01-06 15:07:46,814 IRRA.train INFO: Epoch[24] Iteration[200/1065], loss: 17.2141, sdm_loss: 12.8549, id_loss: 4.3593, Base Lr: 7.58e-07
+2026-01-06 15:12:43,331 IRRA.train INFO: Epoch[24] Iteration[300/1065], loss: 17.1802, sdm_loss: 12.8224, id_loss: 4.3578, Base Lr: 7.58e-07
+2026-01-06 15:17:39,536 IRRA.train INFO: Epoch[24] Iteration[400/1065], loss: 17.2707, sdm_loss: 12.9125, id_loss: 4.3582, Base Lr: 7.58e-07
+2026-01-06 15:22:36,832 IRRA.train INFO: Epoch[24] Iteration[500/1065], loss: 17.2556, sdm_loss: 12.8978, id_loss: 4.3577, Base Lr: 7.58e-07
+2026-01-06 15:27:33,542 IRRA.train INFO: Epoch[24] Iteration[600/1065], loss: 17.2849, sdm_loss: 12.9277, id_loss: 4.3572, Base Lr: 7.58e-07
+2026-01-06 15:32:30,449 IRRA.train INFO: Epoch[24] Iteration[700/1065], loss: 17.2738, sdm_loss: 12.9174, id_loss: 4.3563, Base Lr: 7.58e-07
+2026-01-06 15:37:27,297 IRRA.train INFO: Epoch[24] Iteration[800/1065], loss: 17.2356, sdm_loss: 12.8803, id_loss: 4.3553, Base Lr: 7.58e-07
+2026-01-06 15:42:24,773 IRRA.train INFO: Epoch[24] Iteration[900/1065], loss: 17.2423, sdm_loss: 12.8874, id_loss: 4.3549, Base Lr: 7.58e-07
+2026-01-06 15:47:23,663 IRRA.train INFO: Epoch[24] Iteration[1000/1065], loss: 17.2142, sdm_loss: 12.8599, id_loss: 4.3543, Base Lr: 7.58e-07
+2026-01-06 15:50:34,502 IRRA.train INFO: Epoch 24 done. Time per batch: 2.971[s] Speed: 21.5[samples/s]
+2026-01-06 15:50:34,502 IRRA.train INFO: Validation Results - Epoch: 24
+2026-01-06 15:51:11,973 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 27.437 | 50.861 | 61.598 | 24.648 | 12.141 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 15:51:17,377 IRRA.train INFO: Epoch 25: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 15:56:15,529 IRRA.train INFO: Epoch[25] Iteration[100/1065], loss: 17.0867, sdm_loss: 12.7446, id_loss: 4.3422, Base Lr: 7.33e-07
+2026-01-06 16:01:11,728 IRRA.train INFO: Epoch[25] Iteration[200/1065], loss: 17.0375, sdm_loss: 12.6981, id_loss: 4.3395, Base Lr: 7.33e-07
+2026-01-06 16:06:07,886 IRRA.train INFO: Epoch[25] Iteration[300/1065], loss: 17.1175, sdm_loss: 12.7776, id_loss: 4.3399, Base Lr: 7.33e-07
+2026-01-06 16:11:04,322 IRRA.train INFO: Epoch[25] Iteration[400/1065], loss: 17.1061, sdm_loss: 12.7670, id_loss: 4.3391, Base Lr: 7.33e-07
+2026-01-06 16:16:00,710 IRRA.train INFO: Epoch[25] Iteration[500/1065], loss: 17.0425, sdm_loss: 12.7041, id_loss: 4.3384, Base Lr: 7.33e-07
+2026-01-06 16:20:57,144 IRRA.train INFO: Epoch[25] Iteration[600/1065], loss: 17.0392, sdm_loss: 12.7010, id_loss: 4.3382, Base Lr: 7.33e-07
+2026-01-06 16:25:53,505 IRRA.train INFO: Epoch[25] Iteration[700/1065], loss: 17.1140, sdm_loss: 12.7762, id_loss: 4.3378, Base Lr: 7.33e-07
+2026-01-06 16:30:49,632 IRRA.train INFO: Epoch[25] Iteration[800/1065], loss: 17.0963, sdm_loss: 12.7588, id_loss: 4.3375, Base Lr: 7.33e-07
+2026-01-06 16:35:45,782 IRRA.train INFO: Epoch[25] Iteration[900/1065], loss: 17.0710, sdm_loss: 12.7338, id_loss: 4.3372, Base Lr: 7.33e-07
+2026-01-06 16:40:41,918 IRRA.train INFO: Epoch[25] Iteration[1000/1065], loss: 17.0529, sdm_loss: 12.7163, id_loss: 4.3366, Base Lr: 7.33e-07
+2026-01-06 16:43:52,910 IRRA.train INFO: Epoch 25 done. Time per batch: 2.963[s] Speed: 21.6[samples/s]
+2026-01-06 16:43:52,910 IRRA.train INFO: Validation Results - Epoch: 25
+2026-01-06 16:44:29,451 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 27.697 | 51.007 | 61.517 | 24.942 | 12.244 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 16:44:35,864 IRRA.train INFO: Epoch 26: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 16:49:34,573 IRRA.train INFO: Epoch[26] Iteration[100/1065], loss: 16.7025, sdm_loss: 12.3766, id_loss: 4.3259, Base Lr: 7.08e-07
+2026-01-06 16:54:30,616 IRRA.train INFO: Epoch[26] Iteration[200/1065], loss: 16.7115, sdm_loss: 12.3874, id_loss: 4.3240, Base Lr: 7.08e-07
+2026-01-06 16:59:26,559 IRRA.train INFO: Epoch[26] Iteration[300/1065], loss: 16.7273, sdm_loss: 12.4040, id_loss: 4.3233, Base Lr: 7.08e-07
+2026-01-06 17:04:22,936 IRRA.train INFO: Epoch[26] Iteration[400/1065], loss: 16.7791, sdm_loss: 12.4562, id_loss: 4.3229, Base Lr: 7.08e-07
+2026-01-06 17:09:19,112 IRRA.train INFO: Epoch[26] Iteration[500/1065], loss: 16.8235, sdm_loss: 12.5011, id_loss: 4.3224, Base Lr: 7.08e-07
+2026-01-06 17:14:15,289 IRRA.train INFO: Epoch[26] Iteration[600/1065], loss: 16.8209, sdm_loss: 12.4989, id_loss: 4.3219, Base Lr: 7.08e-07
+2026-01-06 17:19:11,422 IRRA.train INFO: Epoch[26] Iteration[700/1065], loss: 16.8210, sdm_loss: 12.4998, id_loss: 4.3212, Base Lr: 7.08e-07
+2026-01-06 17:24:07,585 IRRA.train INFO: Epoch[26] Iteration[800/1065], loss: 16.8763, sdm_loss: 12.5554, id_loss: 4.3208, Base Lr: 7.08e-07
+2026-01-06 17:29:03,613 IRRA.train INFO: Epoch[26] Iteration[900/1065], loss: 16.8546, sdm_loss: 12.5347, id_loss: 4.3200, Base Lr: 7.08e-07
+2026-01-06 17:33:59,575 IRRA.train INFO: Epoch[26] Iteration[1000/1065], loss: 16.8231, sdm_loss: 12.5037, id_loss: 4.3195, Base Lr: 7.08e-07
+2026-01-06 17:37:10,692 IRRA.train INFO: Epoch 26 done. Time per batch: 2.962[s] Speed: 21.6[samples/s]
+2026-01-06 17:37:10,692 IRRA.train INFO: Validation Results - Epoch: 26
+2026-01-06 17:37:47,180 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 27.632 | 51.251 | 61.907 | 24.943 | 12.218 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 17:37:47,219 IRRA.train INFO: Epoch 27: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 17:42:46,393 IRRA.train INFO: Epoch[27] Iteration[100/1065], loss: 16.7272, sdm_loss: 12.4156, id_loss: 4.3116, Base Lr: 6.81e-07
+2026-01-06 17:47:42,467 IRRA.train INFO: Epoch[27] Iteration[200/1065], loss: 16.6303, sdm_loss: 12.3202, id_loss: 4.3101, Base Lr: 6.81e-07
+2026-01-06 17:52:39,895 IRRA.train INFO: Epoch[27] Iteration[300/1065], loss: 16.5652, sdm_loss: 12.2567, id_loss: 4.3086, Base Lr: 6.81e-07
+2026-01-06 17:57:37,474 IRRA.train INFO: Epoch[27] Iteration[400/1065], loss: 16.6338, sdm_loss: 12.3264, id_loss: 4.3074, Base Lr: 6.81e-07
+2026-01-06 18:02:35,664 IRRA.train INFO: Epoch[27] Iteration[500/1065], loss: 16.6825, sdm_loss: 12.3764, id_loss: 4.3062, Base Lr: 6.81e-07
+2026-01-06 18:07:35,186 IRRA.train INFO: Epoch[27] Iteration[600/1065], loss: 16.6982, sdm_loss: 12.3920, id_loss: 4.3062, Base Lr: 6.81e-07
+2026-01-06 18:12:34,607 IRRA.train INFO: Epoch[27] Iteration[700/1065], loss: 16.6744, sdm_loss: 12.3690, id_loss: 4.3054, Base Lr: 6.81e-07
+2026-01-06 18:17:32,984 IRRA.train INFO: Epoch[27] Iteration[800/1065], loss: 16.6825, sdm_loss: 12.3777, id_loss: 4.3048, Base Lr: 6.81e-07
+2026-01-06 18:22:31,205 IRRA.train INFO: Epoch[27] Iteration[900/1065], loss: 16.6758, sdm_loss: 12.3714, id_loss: 4.3043, Base Lr: 6.81e-07
+2026-01-06 18:27:28,528 IRRA.train INFO: Epoch[27] Iteration[1000/1065], loss: 16.6764, sdm_loss: 12.3728, id_loss: 4.3036, Base Lr: 6.81e-07
+2026-01-06 18:30:40,712 IRRA.train INFO: Epoch 27 done. Time per batch: 2.980[s] Speed: 21.5[samples/s]
+2026-01-06 18:30:40,713 IRRA.train INFO: Validation Results - Epoch: 27
+2026-01-06 18:31:18,764 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 28.119 | 51.608 | 62.297 | 25.213 | 12.435 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 18:31:24,142 IRRA.train INFO: Epoch 28: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 18:36:22,318 IRRA.train INFO: Epoch[28] Iteration[100/1065], loss: 16.4645, sdm_loss: 12.1727, id_loss: 4.2918, Base Lr: 6.55e-07
+2026-01-06 18:41:18,233 IRRA.train INFO: Epoch[28] Iteration[200/1065], loss: 16.5818, sdm_loss: 12.2899, id_loss: 4.2920, Base Lr: 6.55e-07
+2026-01-06 18:46:14,446 IRRA.train INFO: Epoch[28] Iteration[300/1065], loss: 16.5542, sdm_loss: 12.2630, id_loss: 4.2912, Base Lr: 6.55e-07
+2026-01-06 18:51:11,272 IRRA.train INFO: Epoch[28] Iteration[400/1065], loss: 16.4668, sdm_loss: 12.1769, id_loss: 4.2899, Base Lr: 6.55e-07
+2026-01-06 18:56:08,048 IRRA.train INFO: Epoch[28] Iteration[500/1065], loss: 16.5056, sdm_loss: 12.2158, id_loss: 4.2898, Base Lr: 6.55e-07
+2026-01-06 19:01:04,444 IRRA.train INFO: Epoch[28] Iteration[600/1065], loss: 16.4687, sdm_loss: 12.1797, id_loss: 4.2890, Base Lr: 6.55e-07
+2026-01-06 19:06:00,922 IRRA.train INFO: Epoch[28] Iteration[700/1065], loss: 16.4951, sdm_loss: 12.2069, id_loss: 4.2882, Base Lr: 6.55e-07
+2026-01-06 19:10:57,225 IRRA.train INFO: Epoch[28] Iteration[800/1065], loss: 16.4683, sdm_loss: 12.1801, id_loss: 4.2883, Base Lr: 6.55e-07
+2026-01-06 19:15:54,380 IRRA.train INFO: Epoch[28] Iteration[900/1065], loss: 16.4607, sdm_loss: 12.1735, id_loss: 4.2873, Base Lr: 6.55e-07
+2026-01-06 19:20:50,766 IRRA.train INFO: Epoch[28] Iteration[1000/1065], loss: 16.4774, sdm_loss: 12.1904, id_loss: 4.2869, Base Lr: 6.55e-07
+2026-01-06 19:24:01,760 IRRA.train INFO: Epoch 28 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 19:24:01,760 IRRA.train INFO: Validation Results - Epoch: 28
+2026-01-06 19:24:38,797 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 28.476 | 52.128 | 62.541 | 25.384 | 12.519 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 19:24:44,900 IRRA.train INFO: Epoch 29: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 19:29:43,599 IRRA.train INFO: Epoch[29] Iteration[100/1065], loss: 16.4090, sdm_loss: 12.1315, id_loss: 4.2775, Base Lr: 6.27e-07
+2026-01-06 19:34:39,822 IRRA.train INFO: Epoch[29] Iteration[200/1065], loss: 16.4409, sdm_loss: 12.1651, id_loss: 4.2758, Base Lr: 6.27e-07
+2026-01-06 19:39:36,190 IRRA.train INFO: Epoch[29] Iteration[300/1065], loss: 16.4147, sdm_loss: 12.1395, id_loss: 4.2752, Base Lr: 6.27e-07
+2026-01-06 19:44:32,500 IRRA.train INFO: Epoch[29] Iteration[400/1065], loss: 16.3990, sdm_loss: 12.1252, id_loss: 4.2739, Base Lr: 6.27e-07
+2026-01-06 19:49:29,059 IRRA.train INFO: Epoch[29] Iteration[500/1065], loss: 16.3646, sdm_loss: 12.0910, id_loss: 4.2735, Base Lr: 6.27e-07
+2026-01-06 19:54:25,189 IRRA.train INFO: Epoch[29] Iteration[600/1065], loss: 16.3656, sdm_loss: 12.0927, id_loss: 4.2729, Base Lr: 6.27e-07
+2026-01-06 19:59:22,175 IRRA.train INFO: Epoch[29] Iteration[700/1065], loss: 16.3536, sdm_loss: 12.0809, id_loss: 4.2727, Base Lr: 6.27e-07
+2026-01-06 20:04:18,597 IRRA.train INFO: Epoch[29] Iteration[800/1065], loss: 16.3338, sdm_loss: 12.0616, id_loss: 4.2722, Base Lr: 6.27e-07
+2026-01-06 20:09:14,893 IRRA.train INFO: Epoch[29] Iteration[900/1065], loss: 16.3263, sdm_loss: 12.0544, id_loss: 4.2718, Base Lr: 6.27e-07
+2026-01-06 20:14:11,174 IRRA.train INFO: Epoch[29] Iteration[1000/1065], loss: 16.3283, sdm_loss: 12.0572, id_loss: 4.2712, Base Lr: 6.27e-07
+2026-01-06 20:17:22,163 IRRA.train INFO: Epoch 29 done. Time per batch: 2.965[s] Speed: 21.6[samples/s]
+2026-01-06 20:17:22,164 IRRA.train INFO: Validation Results - Epoch: 29
+2026-01-06 20:17:59,389 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 28.216 | 51.998 | 62.882 | 25.361 | 12.535 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 20:17:59,428 IRRA.train INFO: Epoch 30: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 20:22:57,917 IRRA.train INFO: Epoch[30] Iteration[100/1065], loss: 16.1156, sdm_loss: 11.8542, id_loss: 4.2614, Base Lr: 5.99e-07
+2026-01-06 20:27:53,917 IRRA.train INFO: Epoch[30] Iteration[200/1065], loss: 16.2020, sdm_loss: 11.9392, id_loss: 4.2628, Base Lr: 5.99e-07
+2026-01-06 20:32:49,894 IRRA.train INFO: Epoch[30] Iteration[300/1065], loss: 16.2257, sdm_loss: 11.9652, id_loss: 4.2605, Base Lr: 5.99e-07
+2026-01-06 20:37:45,924 IRRA.train INFO: Epoch[30] Iteration[400/1065], loss: 16.2524, sdm_loss: 11.9937, id_loss: 4.2587, Base Lr: 5.99e-07
+2026-01-06 20:42:42,017 IRRA.train INFO: Epoch[30] Iteration[500/1065], loss: 16.2771, sdm_loss: 12.0187, id_loss: 4.2584, Base Lr: 5.99e-07
+2026-01-06 20:47:38,004 IRRA.train INFO: Epoch[30] Iteration[600/1065], loss: 16.2898, sdm_loss: 12.0322, id_loss: 4.2576, Base Lr: 5.99e-07
+2026-01-06 20:52:34,591 IRRA.train INFO: Epoch[30] Iteration[700/1065], loss: 16.2731, sdm_loss: 12.0159, id_loss: 4.2572, Base Lr: 5.99e-07
+2026-01-06 20:57:31,170 IRRA.train INFO: Epoch[30] Iteration[800/1065], loss: 16.2666, sdm_loss: 12.0099, id_loss: 4.2567, Base Lr: 5.99e-07
+2026-01-06 21:02:27,565 IRRA.train INFO: Epoch[30] Iteration[900/1065], loss: 16.2415, sdm_loss: 11.9856, id_loss: 4.2558, Base Lr: 5.99e-07
+2026-01-06 21:07:24,179 IRRA.train INFO: Epoch[30] Iteration[1000/1065], loss: 16.2285, sdm_loss: 11.9734, id_loss: 4.2551, Base Lr: 5.99e-07
+2026-01-06 21:10:35,265 IRRA.train INFO: Epoch 30 done. Time per batch: 2.963[s] Speed: 21.6[samples/s]
+2026-01-06 21:10:35,265 IRRA.train INFO: Validation Results - Epoch: 30
+2026-01-06 21:11:12,780 IRRA.eval INFO: 
++------+--------+--------+--------+--------+--------+
+| task |   R1   |   R5   |  R10   |  mAP   |  mINP  |
++------+--------+--------+--------+--------+--------+
+| t2i  | 28.947 | 52.518 | 62.914 | 25.715 | 12.782 |
++------+--------+--------+--------+--------+--------+
+2026-01-06 21:11:18,595 IRRA.train INFO: Epoch 31: Vision Tower is UNFROZEN (0/437 params affected).
+2026-01-06 21:16:17,517 IRRA.train INFO: Epoch[31] Iteration[100/1065], loss: 16.0171, sdm_loss: 11.7726, id_loss: 4.2445, Base Lr: 5.71e-07
+2026-01-06 21:21:13,530 IRRA.train INFO: Epoch[31] Iteration[200/1065], loss: 15.8738, sdm_loss: 11.6310, id_loss: 4.2428, Base Lr: 5.71e-07
+2026-01-06 21:26:11,282 IRRA.train INFO: Epoch[31] Iteration[300/1065], loss: 15.9177, sdm_loss: 11.6750, id_loss: 4.2427, Base Lr: 5.71e-07

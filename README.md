@@ -7,15 +7,14 @@ python train.py \
   --loss_names 'sdm+id' \
   --gen_loss_weight 0 \
   --bnneck \
-  --batch_size 64 \
+  --batch_size 32 \
   --num_workers 12 \
-  --t5_image_size 448 \
   --attn_implementation sdpa \
   --amp --amp_dtype bf16 \
   --gradient_checkpointing \
   --lr 1e-6 \
-  --projector_lr 1e-5 \
-  --classifier_lr 1e-5 \
+  --projector_lr 3e-5 \
+  --classifier_lr 3e-5 \
   --num_epoch 60
 
 ## Usage

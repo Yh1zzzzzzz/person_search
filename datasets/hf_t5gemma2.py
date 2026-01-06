@@ -178,17 +178,17 @@ class ImageTextDatasetT5Gemma2(Dataset):
         pid, image_id, img_path, caption = self.dataset[index]
         image = read_image(img_path)
 
-        # pixel_values
-        if self.train_transforms is not None:
-            pv = self.train_transforms(image)
-        else:
-            image_processor = getattr(self.processor, "image_processor", None)
-            if image_processor is not None:
-                pv = image_processor(images=image, return_tensors="pt")["pixel_values"].squeeze(0)
-            else:
-                pv = self.processor(text="", images=image, return_tensors="pt")["pixel_values"].squeeze(0)
 
-        # text input ids
+        if self.train_transforms is not None:
+            image = self.train_transforms(image)
+
+        # pixel_values
+        image_processor = getattr(self.processor, "image_processor", None)
+        if image_processor is not None:
+            pv = image_processor(images=image, return_tensors="pt")["pixel_values"].squeeze(0)
+        else:
+            pv = self.processor(text="", images=image, return_tensors="pt")["pixel_values"].squeeze(0)
+
         tok = self.tokenizer(
             caption,
             padding="max_length",
@@ -208,13 +208,9 @@ class ImageTextDatasetT5Gemma2(Dataset):
         }
 
         if self.enable_gen and self._gen_prompt_ids is not None:
-            # Model forward concatenates image tokens internally, so here we only provide the text-part prompt.
             ret["masked_input_ids"] = self._gen_prompt_ids.clone()
 
         if self.enable_mlm:
-            # IMPORTANT: when using pixel_values in the model forward, T5Gemma2 expects
-            # image placeholder tokens inside input_ids. So MLM must use processor(text+image)
-            # rather than tokenizer(text-only).
             mm = self.processor(
                 text="<start_of_image> " + caption,
                 images=image,
@@ -255,13 +251,13 @@ class ImageDatasetT5Gemma2(Dataset):
         pid, img_path = self.image_pids[index], self.img_paths[index]
         image = read_image(img_path)
         if self.transforms is not None:
-            pv = self.transforms(image)
+            image = self.transforms(image)
+
+        image_processor = getattr(self.processor, "image_processor", None)
+        if image_processor is not None:
+            pv = image_processor(images=image, return_tensors="pt")["pixel_values"].squeeze(0)
         else:
-            image_processor = getattr(self.processor, "image_processor", None)
-            if image_processor is not None:
-                pv = image_processor(images=image, return_tensors="pt")["pixel_values"].squeeze(0)
-            else:
-                pv = self.processor(text="", images=image, return_tensors="pt")["pixel_values"].squeeze(0)
+            pv = self.processor(text="", images=image, return_tensors="pt")["pixel_values"].squeeze(0)
         return pid, pv
 
 

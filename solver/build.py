@@ -32,7 +32,7 @@ def build_optimizer(args, model):
         # Note: "vision_tower_align" also contains "vision_tower", so we must handle it carefully.
         # We set this FIRST, and let subsequent checks (like projector_lr) overwrite it if needed.
         if "vision_tower" in key:
-            lr = args.lr * 0.1
+            lr = args.lr 
 
         # Projection heads: use the same (larger) learning rate for symmetric alignment.
         # - t5gemma2_vion_tower: vision_tower_align.*
