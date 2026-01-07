@@ -142,3 +142,4 @@
 | t2i  | 0.179 | 0.796 | 1.543 | 0.454 | 0.191 |
 +------+-------+-------+-------+-------+-------+
 2026-01-07 09:28:58,223 IRRA.train INFO: Epoch 3: Vision Tower is FROZEN (437/437 params affected).
+2026-01-07 09:40:37,457 IRRA.train INFO: Epoch[3] Iteration[100/2129], loss: 38.0802, sdm_loss: 28.7788, id_loss: 9.3014, Base Lr: 2.76e-06

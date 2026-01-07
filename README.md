@@ -12,7 +12,7 @@ python train.py \
   --attn_implementation sdpa \
   --amp --amp_dtype bf16 \
   --gradient_checkpointing \
-  --lr 8e-6 \
+  --lr 1e-5 \
   --projector_lr 1e-4 \
   --classifier_lr 1e-4 \
   --num_epoch 60
