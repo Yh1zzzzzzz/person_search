@@ -54,7 +54,8 @@ def do_train(start_epoch, args, model, train_loader, evaluator, optimizer,
         warmup_epochs = int(getattr(args, "warmup_epochs", 5))
         
         # Determine if we should freeze vision tower
-        should_freeze = (epoch <= warmup_epochs)
+        # should_freeze = (epoch <= warmup_epochs)
+        should_freeze = False
         
         _model_inner = model.module if hasattr(model, "module") else model
         
