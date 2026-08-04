@@ -1,0 +1,22 @@
+{
+  "stage": 2,
+  "manifest": "data/m_pedes.jsonl",
+  "output_dir": "outputs/gram_stage2_mpedes",
+  "checkpoint": "outputs/gram_stage1_cuhk/best.pt",
+  "languages": ["zh", "ja", "ko", "de", "fr", "es", "ar", "ru"],
+  "lambda_mst": 1.0,
+  "lambda_mdm": 1.0,
+  "distillation_temperature": 2.0,
+  "backbone_lr": 0.00005,
+  "head_lr": 0.0005,
+  "weight_decay": 0.0001,
+  "epochs": 60,
+  "warmup_epochs": 5,
+  "batch_size": 64,
+  "gradient_accumulation": 1,
+  "num_workers": 8,
+  "max_text_length": 96,
+  "dtype": "bf16",
+  "gradient_checkpointing": true,
+  "seed": 1
+}

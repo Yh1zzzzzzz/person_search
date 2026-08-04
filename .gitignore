@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Local data, model weights, and experiment outputs
+data/
+outputs/
+checkpoints/
+logs/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+*.bin
+
+# Editors and OS files
+.DS_Store
+.idea/
+.vscode/
