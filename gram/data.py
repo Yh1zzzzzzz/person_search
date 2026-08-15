@@ -173,7 +173,10 @@ class Stage1Collator:
         images, pids, captions = zip(*samples, strict=True)
         prompts = [f"<start_of_image> {self.prompt}"] * len(images)
         multimodal = self.processor(
-            images=list(images), text=prompts, padding=True, return_tensors="pt"
+            images=[[image] for image in images],
+            text=prompts,
+            padding=True,
+            return_tensors="pt",
         )
         query = _tokenize(self.processor.tokenizer, captions, self.max_text_length)
         return {
@@ -231,7 +234,10 @@ class GalleryCollator:
         else:
             prompts = [f"<start_of_image> {self.prompt}"] * len(images)
             processed = self.processor(
-                images=list(images), text=prompts, padding=True, return_tensors="pt"
+                images=[[image] for image in images],
+                text=prompts,
+                padding=True,
+                return_tensors="pt",
             )
         result = {
             "pixel_values": processed["pixel_values"],
