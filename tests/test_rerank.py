@@ -54,8 +54,11 @@ def test_cached_generation_path_does_not_call_vision_tower():
         def __init__(self):
             super().__init__()
             self.config = SimpleNamespace(image_token_id=9)
-            self.embed_tokens = nn.Embedding(20, 4)
+            self._input_embeddings = nn.Embedding(20, 4)
             self.vision_tower = FailingVisionTower()
+
+        def get_input_embeddings(self):
+            return self._input_embeddings
 
         def forward(self, *, inputs_embeds, attention_mask, return_dict):
             return SimpleNamespace(last_hidden_state=inputs_embeds)

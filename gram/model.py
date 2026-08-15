@@ -196,7 +196,7 @@ class GRAM(nn.Module):
         """
 
         encoder = self.encoder
-        inputs_embeds = encoder.embed_tokens(input_ids)
+        inputs_embeds = encoder.get_input_embeddings()(input_ids)
         image_token_id = int(encoder.config.image_token_id)
         inputs_embeds = inject_cached_image_features(
             input_ids, inputs_embeds, image_features, image_token_id
